@@ -1,0 +1,70 @@
+# Project information
+site_name: "TAO Publisher"
+site_description: "TAO application publisher API/CLI"
+site_author: "Clément GUICHARD"
+
+# Repository
+repo_name: "clement.guichard/tao-publisher"
+repo_url: "https://gitlab.si.c-s.fr/clement.guichard/tao-publisher"
+edit_uri: edit/main/docs/
+
+# Copyright
+copyright: "Copyright &copy; 2023, CS GROUP https://www.csgroup.eu/"
+
+# Configuration
+site_dir: "build/html"
+docs_dir: "source"
+theme:
+  name: material
+  features:
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+  icon:
+    repo: fontawesome/brands/github
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - mkdocs-click
+  - markdown_include.include:
+      base_path: docs
+  - pymdownx.details
+  - pymdownx.superfences
+
+# Plugins
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [../src]
+          options:
+            docstring_options:
+              ignore_init_summary: true
+            docstring_style: sphinx
+            docstring_section_style: list
+            group_by_category: true
+            merge_init_into_class: true
+            show_category_heading: true
+            show_root_heading: true
+            show_signature_annotations: true
+
+# Page tree
+nav:
+  - Overview: index.md
+  - Users:
+      - Installation: users/installation.md
+      - Usage: users/usage.md
+  - Developers / Contributors:
+      - Contributing: developers/contributing.md
+      - API reference:
+          - developers/api_reference/index.md
+      - CLI reference: developers/cli_reference.md
+      - Source code: "https://gitlab.si.c-s.fr/clement.guichard/tao-publisher"
