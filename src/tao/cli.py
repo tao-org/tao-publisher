@@ -5,14 +5,15 @@ from importlib.metadata import metadata
 from typing import Any, Optional
 
 import click
-from rich import print, prompt, traceback
+from rich import prompt, traceback
 
 from tao.client import TaoApiClient
 from tao.config import Config
-from tao.logging import get_logger, setup_logging
+from tao.logging import get_console, get_logger, setup_logging
 from tao.utils.http import is_uri
 
 logger = get_logger()
+console = get_console()
 
 
 @click.group
@@ -48,8 +49,8 @@ def version() -> None:
     pkg_name = m["Name"]
     pkg_version = m["Version"]
     pkg_summary = m["Summary"]
-    print(f"[blue]{pkg_name}[/blue]: [u]{pkg_version}")
-    print(f"{pkg_summary}")
+    console.print(f"[blue]{pkg_name}[/blue]: [u]{pkg_version}", highlight=False)
+    console.print(f"{pkg_summary}")
 
 
 @main.command
@@ -69,8 +70,8 @@ def config(ctx: click.Context, url: Optional[str]) -> None:
 
     if not any(ctx.params.values()):
         _token_repr = "[blue]SET" if config.token else None
-        print(f"[bold]URL:[/bold] {config.url}")
-        print(f"[bold]Token:[/bold] {_token_repr}")
+        console.print(f"[bold]URL:[/bold] {config.url}")
+        console.print(f"[bold]Token:[/bold] {_token_repr}")
 
 
 @main.command
