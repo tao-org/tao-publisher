@@ -5,11 +5,22 @@ from importlib.metadata import metadata
 import click
 from rich import print, traceback
 
+from tao.logging import get_logger, setup_logging
+
+logger = get_logger()
+
 
 @click.group
-def main() -> None:
+@click.option(
+    "-v",
+    "--verbose",
+    count=True,
+    help="Control the verbosity of the logs. For maximum verbosity, type -vvv",
+)
+def main(verbose: int) -> None:
     """TAO Publisher CLI."""
     traceback.install(show_locals=True, suppress=[click])
+    setup_logging(verbosity=verbose)
 
 
 @main.command()
