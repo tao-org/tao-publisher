@@ -30,6 +30,7 @@ classifiers = [
 dependencies = [
     "click~=8.1",
     "PyYAML~=6.0",
+    "requests~=2.31",
     "rich~=13.5",
 ]
 dynamic = ["version"]
@@ -61,6 +62,7 @@ lint = [
     "ruff==0.0.291",
     # Stubs
     "types-PyYAML~=6.0",
+    "types-requests~=2.31",
 ]
 docs = [
     "markdown-include~=0.8",

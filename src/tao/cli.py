@@ -5,8 +5,9 @@ from importlib.metadata import metadata
 from typing import Any, Optional
 
 import click
-from rich import print, traceback
+from rich import print, prompt, traceback
 
+from tao.client import TaoApiClient
 from tao.config import Config
 from tao.logging import get_logger, setup_logging
 from tao.utils.http import is_uri
@@ -67,7 +68,37 @@ def config(ctx: click.Context, url: Optional[str]) -> None:
         config.url = url
 
     if not any(ctx.params.values()):
+        _token_repr = "[blue]SET" if config.token else None
         print(f"[bold]URL:[/bold] {config.url}")
+        print(f"[bold]Token:[/bold] {_token_repr}")
+
+
+@main.command
+@click.option("-u", "--username", type=str, help="Account username.")
+@click.option("-p", "--password", type=str, help="Account password.")
+@click.pass_context
+def login(ctx: click.Context, username: Optional[str], password: Optional[str]) -> None:
+    """Authenticate with API."""
+    config: Config = ctx.obj["config"]
+    if not config.url:
+        logger.error("[red]No URL configured for API.")
+        sys.exit(1)
+
+    if not username:
+        username = prompt.Prompt.ask("Enter your username")
+    if not password:
+        password = prompt.Prompt.ask("Enter your password", password=True)
+
+    try:
+        api = TaoApiClient(config=config)
+        token = api.login(username, password)
+    except ValueError as err:
+        logger.error(f"[red]{err}")
+        sys.exit(1)
+
+    logger.info("Auth token retrieved.")
+    logger.debug(f"Auth token: {token}")
+    config.token = token
 
 
 if __name__ == "__main__":

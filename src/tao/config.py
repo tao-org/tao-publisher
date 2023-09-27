@@ -1,5 +1,6 @@
 """Configuration for TAO Publisher."""
 
+from base64 import b64decode, b64encode
 from pathlib import Path
 from typing import Optional, TypedDict, cast
 
@@ -67,9 +68,14 @@ class Config:
     @property
     def token(self) -> Optional[str]:
         """TAO user auth token."""
-        return self._conf["token"]
+        _token = self._conf["token"]
+        if _token:
+            _token = b64decode(_token.encode()).decode()
+        return _token
 
     @token.setter
     def token(self, val: Optional[str]) -> None:
         """Save auth informations."""
+        if val:
+            val = b64encode(val.encode()).decode()
         self._conf["token"] = val
