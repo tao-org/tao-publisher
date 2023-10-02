@@ -36,8 +36,8 @@ class TaoApiClient:
                     return cast(str, data["authToken"])
             msg = "Authentication failed.\n"
             msg += "Unexpected server response."
-            raise ValueError(msg)
+            raise RuntimeError(msg)
         except requests.JSONDecodeError as err:
             msg = "Authentication failed.\n"
             msg += "Please verify your username and password."
-            raise ValueError(msg) from err
+            raise RuntimeError(msg) from err

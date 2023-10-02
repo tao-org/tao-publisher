@@ -93,7 +93,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
     try:
         api = TaoApiClient(config=config)
         token = api.login(username, password)
-    except ValueError as err:
+    except (ValueError, RuntimeError) as err:
         logger.error(f"[red]{err}")
         sys.exit(1)
 
