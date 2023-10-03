@@ -127,6 +127,38 @@ def container(ctx: click.Context) -> None:
 
 @container.command
 @click.argument("container_id", nargs=-1)
+@click.option("-y", "--yes", is_flag=True, help="Confirm container deletion.")
+@click.option("-i", "--ignore", is_flag=True, help="Ignore non-existing containers.")
+@click.pass_context
+def delete(
+    ctx: click.Context,
+    container_id: Tuple[str, ...],
+    yes: bool,
+    ignore: bool,
+) -> None:
+    """Delete container."""
+    api: ContainerAPI = ctx.obj[CONTEXT_API]
+    for _id in container_id:
+        try:
+            container = api.get(_id)
+            logger.debug(f"{container=}")
+
+            confirm = True if yes else prompt.Confirm.ask(f"Delete '{container.name}'?")
+            if confirm:
+                api.delete(_id)
+                logger.info(f"Container deleted: '{container.name}'")
+            else:
+                logger.info(f"Container '{container.name}' was not deleted.")
+
+        except (ValueError, RuntimeError) as err:  ## noqa: PERF203
+            if not ignore:
+                logger.error(f"{err}")
+                sys.exit(1)
+            logger.debug(f"{err}")
+
+
+@container.command
+@click.argument("container_id", nargs=-1)
 @click.option("-j", "--json", is_flag=True, help="Display as JSON.")
 @click.option(
     "-c",

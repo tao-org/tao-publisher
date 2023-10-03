@@ -29,3 +29,7 @@ class ContainerAPI(ServiceAPI):
         response = self.client.request("GET", self._path(f"/{container_id}"))
         data = response.get("data")
         return ContainerDescription(**data)
+
+    def delete(self, container_id: str) -> None:
+        """Delete container."""
+        self.client.request("DELETE", self._path(f"/{container_id}"))
