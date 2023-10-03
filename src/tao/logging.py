@@ -6,7 +6,7 @@ from rich.console import Console
 from rich.logging import RichHandler
 
 LOG_FORMAT = "%(message)s"
-LOG_FORMAT_VERBOSE = "[i]%(name)s[/i] │ %(message)s"
+LOG_FORMAT_VERBOSE = "%(name)s │ %(message)s"
 LOG_DATE_FORMAT = "[%X]"
 VERBOSITY_MIN = 0
 VERBOSITY_MAX = 3
@@ -54,7 +54,7 @@ def setup_logging(verbosity: int) -> None:
                 show_time=show_time,
                 show_level=show_level,
                 show_path=False,
-                markup=True,
+                markup=False,
                 rich_tracebacks=True,
             ),
         ],

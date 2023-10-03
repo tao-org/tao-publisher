@@ -68,7 +68,7 @@ def configure(ctx: click.Context, url: Optional[str]) -> None:
 
     if url:
         if not is_uri(url):
-            logger.error("[red]Given URL is not a valid URI.")
+            logger.error("Given URL is not a valid URI.")
             sys.exit(1)
 
         logger.info(f"URL configured: {url}")
@@ -90,7 +90,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
     try:
         api = APIClient(config=config)
     except ValueError as err:
-        logger.error(f"[red]{err}")
+        logger.error(f"{err}")
         sys.exit(1)
 
     if not username:
@@ -101,7 +101,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
     try:
         token = api.login(username, password)
     except RuntimeError as err:
-        logger.error(f"[red]{err}")
+        logger.error(f"{err}")
         sys.exit(1)
 
     logger.info("Auth token retrieved.")
@@ -120,7 +120,7 @@ def container(ctx: click.Context) -> None:
         ctx.obj[CONTEXT_CLIENT] = client
         ctx.obj[CONTEXT_API] = api
     except ValueError as err:
-        logger.error(f"[red]{err}")
+        logger.error(f"{err}")
         sys.exit(1)
 
 
@@ -188,7 +188,7 @@ def container_list(
                     )
                 console.print()
     except (TypeError, ValueError, RuntimeError) as err:
-        logger.error(f"[red]{err}")
+        logger.error(f"{err}")
         sys.exit(1)
 
 
