@@ -182,7 +182,10 @@ def container_list(
                     field,
                     value,
                 ) in container.items():
-                    console.print(f"  [b]{field}[/b]: {value}")
+                    console.print(
+                        f"  [b]{field}[/b]: {value}",
+                        highlight=not isinstance(value, str),
+                    )
                 console.print()
     except (TypeError, ValueError, RuntimeError) as err:
         logger.error(f"[red]{err}")
