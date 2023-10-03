@@ -7,7 +7,7 @@ from typing import Any, Optional
 import click
 from rich import prompt, traceback
 
-from tao.client import TaoApiClient
+from tao.api import TaoApiClient
 from tao.config import Config
 from tao.logging import get_console, get_logger, setup_logging
 from tao.utils.http import is_uri
@@ -100,6 +100,78 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
     logger.info("Auth token retrieved.")
     logger.debug(f"Auth token: {token}")
     config.token = token
+
+
+@main.group
+def container() -> None:
+    """Manage containers."""
+    ...
+
+
+@container.command(name="list")
+@click.option("-j", "--json", is_flag=True, help="Display as JSON.")
+@click.option(
+    "-c",
+    "--clean",
+    is_flag=True,
+    help="Don't output default values, as well as null.",
+)
+@click.option(
+    "-a",
+    "--applications",
+    is_flag=True,
+    help="Display containers applications.",
+)
+@click.option("-l", "--logo", is_flag=True, help="Display containers logos in base64.")
+@click.pass_context
+def container_list(
+    ctx: click.Context,
+    json: bool,
+    clean: bool,
+    applications: bool,
+    logo: bool,
+) -> None:
+    """List containers."""
+    config: Config = ctx.obj["config"]
+
+    exclude_set = set()
+    if not applications:
+        exclude_set.add("applications")
+    if not logo:
+        exclude_set.add("logo")
+
+    try:
+        api = TaoApiClient(config=config)
+        containers = api.list_containers()
+        serialized_containers = [
+            c.model_dump(
+                by_alias=True,
+                exclude=exclude_set,
+                exclude_defaults=clean,
+                exclude_none=clean,
+                exclude_unset=clean,
+            )
+            for c in containers
+        ]
+        if json:
+            console.print(serialized_containers)
+        else:
+            for container in serialized_containers:
+                container_id = container.pop("id")
+                container_name = container.pop("name")
+                console.print(
+                    f"[blue]{container_name}[/blue]([purple]{container_id}[/purple])",
+                    highlight=False,
+                )
+                for (
+                    field,
+                    value,
+                ) in container.items():
+                    console.print(f"  [b]{field}[/b]: {value}")
+                console.print()
+    except (TypeError, ValueError, RuntimeError) as err:
+        logger.error(f"[red]{err}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

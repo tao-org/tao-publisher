@@ -29,6 +29,7 @@ classifiers = [
 ]
 dependencies = [
     "click~=8.1",
+    "pydantic~=2.4",
     "PyYAML~=6.0",
     "requests~=2.31",
     "rich~=13.5",
