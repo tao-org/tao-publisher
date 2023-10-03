@@ -1,10 +1,9 @@
 """TAO API client module."""
 
-from typing import Any, List, Optional, cast
+from typing import Any, Optional, cast
 
 import requests
 
-from tao.api.models import ContainerDescription
 from tao.config import Config
 from tao.logging import get_logger
 from tao.utils.http import HTTP_401_UNAUTHORIZED
@@ -12,7 +11,7 @@ from tao.utils.http import HTTP_401_UNAUTHORIZED
 logger = get_logger()
 
 
-class TaoApiClient:
+class APIClient:
     """TAO API Client."""
 
     def __init__(self, config: Config) -> None:
@@ -20,19 +19,35 @@ class TaoApiClient:
             msg = "URL not configured"
             raise ValueError(msg)
 
-        self.config = config
+        self.token = config.token
         self.api_url = config.url.rstrip("/")
 
-    def _request(
+    def login(self, username: str, password: str) -> str:
+        """Login user and retrieve auth token."""
+        data = self.request(
+            "POST",
+            "/auth/login",
+            data={"username": username, "password": password},
+        )
+
+        if isinstance(data, dict) and "authToken" in data:
+            self.token = data["authToken"]
+            return cast(str, self.token)
+
+        logger.debug(f"Login data: {data}")
+        msg = "Login response missing authToken"
+        raise RuntimeError(msg)
+
+    def request(
         self,
         method: str,
         api_path: str,
         data: Optional[Any] = None,  ## noqa: ANN401
     ) -> Any:  ## noqa: ANN401
+        """Send request to TAO API."""
         headers = {}
-        token = self.config.token
-        if token:
-            headers["X-Auth-Token"] = token
+        if self.token:
+            headers["X-Auth-Token"] = self.token
         response = requests.request(
             method=method,
             url=f"{self.api_url}/{api_path.lstrip('/')}",
@@ -61,26 +76,3 @@ class TaoApiClient:
                 msg = "Request failed.\n"
                 msg += f"HTTP {err.response.status_code}"
             raise RuntimeError(msg) from err
-
-    def login(self, username: str, password: str) -> str:
-        """Login user and retrieve auth token."""
-        data = self._request(
-            "POST",
-            "/auth/login",
-            data={"username": username, "password": password},
-        )
-        if isinstance(data, dict) and "authToken" in data:
-            return cast(str, data["authToken"])
-        logger.debug(f"Login data: {data}")
-        msg = "Login response missing authToken"
-        raise RuntimeError(msg)
-
-    def list_containers(self) -> List[ContainerDescription]:
-        """List containers registered in TAO."""
-        data = self._request("GET", "/docker/")
-        if not isinstance(data, list):
-            msg = "Unexpected response, didn't contain a list of containers."
-            raise TypeError(
-                msg,
-            )
-        return [ContainerDescription(**d) for d in data]

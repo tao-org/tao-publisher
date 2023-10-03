@@ -7,13 +7,19 @@ from typing import Any, Optional
 import click
 from rich import prompt, traceback
 
-from tao.api import TaoApiClient
+from tao.api.container import ContainerAPI
+from tao.client import APIClient
 from tao.config import Config
 from tao.logging import get_console, get_logger, setup_logging
 from tao.utils.http import is_uri
 
 logger = get_logger()
 console = get_console()
+
+
+CONTEXT_CONFIG = "config"
+CONTEXT_CLIENT = "client"
+CONTEXT_API = "api"
 
 
 @click.group
@@ -31,14 +37,14 @@ def main(ctx: click.Context, verbose: int) -> None:
     ctx.ensure_object(dict)
 
     logger.debug("Load config")
-    ctx.obj["config"] = Config()
+    ctx.obj[CONTEXT_CONFIG] = Config()
 
 
 @main.result_callback()
 @click.pass_context
 def _callback(*args: Any, **kwargs: Any) -> None:
     ctx: click.Context = args[0]
-    config: Config = ctx.obj["config"]
+    config: Config = ctx.obj[CONTEXT_CONFIG]
     config.write()
 
 
@@ -53,12 +59,12 @@ def version() -> None:
     console.print(f"{pkg_summary}")
 
 
-@main.command
+@main.command(name="config")
 @click.option("-u", "--url", type=str, help="TAO base API URL.")
 @click.pass_context
-def config(ctx: click.Context, url: Optional[str]) -> None:
-    """Manage configuration."""
-    config: Config = ctx.obj["config"]
+def configure(ctx: click.Context, url: Optional[str]) -> None:
+    """Configure client/CLI."""
+    config: Config = ctx.obj[CONTEXT_CONFIG]
 
     if url:
         if not is_uri(url):
@@ -80,9 +86,11 @@ def config(ctx: click.Context, url: Optional[str]) -> None:
 @click.pass_context
 def login(ctx: click.Context, username: Optional[str], password: Optional[str]) -> None:
     """Authenticate with API."""
-    config: Config = ctx.obj["config"]
-    if not config.url:
-        logger.error("[red]No URL configured for API.")
+    config: Config = ctx.obj[CONTEXT_CONFIG]
+    try:
+        api = APIClient(config=config)
+    except ValueError as err:
+        logger.error(f"[red]{err}")
         sys.exit(1)
 
     if not username:
@@ -91,9 +99,8 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
         password = prompt.Prompt.ask("Enter your password", password=True)
 
     try:
-        api = TaoApiClient(config=config)
         token = api.login(username, password)
-    except (ValueError, RuntimeError) as err:
+    except RuntimeError as err:
         logger.error(f"[red]{err}")
         sys.exit(1)
 
@@ -103,9 +110,18 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
 
 
 @main.group
-def container() -> None:
+@click.pass_context
+def container(ctx: click.Context) -> None:
     """Manage containers."""
-    ...
+    try:
+        config: Config = ctx.obj[CONTEXT_CONFIG]
+        client = APIClient(config=config)
+        api = ContainerAPI(client=client)
+        ctx.obj[CONTEXT_CLIENT] = client
+        ctx.obj[CONTEXT_API] = api
+    except ValueError as err:
+        logger.error(f"[red]{err}")
+        sys.exit(1)
 
 
 @container.command(name="list")
@@ -132,7 +148,7 @@ def container_list(
     logo: bool,
 ) -> None:
     """List containers."""
-    config: Config = ctx.obj["config"]
+    api: ContainerAPI = ctx.obj[CONTEXT_API]
 
     exclude_set = set()
     if not applications:
@@ -141,8 +157,7 @@ def container_list(
         exclude_set.add("logo")
 
     try:
-        api = TaoApiClient(config=config)
-        containers = api.list_containers()
+        containers = api.list_all()
         serialized_containers = [
             c.model_dump(
                 by_alias=True,

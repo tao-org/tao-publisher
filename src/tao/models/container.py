@@ -1,4 +1,4 @@
-"""TAO API models."""
+"""TAO container models/schemas."""
 
 from typing import Any, List, Optional
 
