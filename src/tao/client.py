@@ -24,11 +24,12 @@ class APIClient:
 
     def login(self, username: str, password: str) -> str:
         """Login user and retrieve auth token."""
-        data = self.request(
+        response = self.request(
             "POST",
             "/auth/login",
             data={"username": username, "password": password},
         )
+        data = response.get("data")
 
         if isinstance(data, dict) and "authToken" in data:
             self.token = data["authToken"]
@@ -60,8 +61,14 @@ class APIClient:
             response_json = response.json()
             if isinstance(response_json, dict):
                 status = response_json.get("status")
-                if status == "SUCCEEDED" and "data" in response_json:
-                    return response_json["data"]
+                if status == "SUCCEEDED":
+                    return response_json
+                raise RuntimeError(
+                    response_json.get(
+                        "message",
+                        f"Request status: {status}",
+                    ),
+                )
             logger.debug(f"Response content: {response.content.decode()}")
             msg = "Unexpected server response, JSON is malformed."
             raise RuntimeError(msg)

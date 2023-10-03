@@ -15,7 +15,8 @@ class ContainerAPI(ServiceAPI):
 
     def list_all(self) -> List[ContainerDescription]:
         """List containers registered in TAO."""
-        data = self.client.request("GET", self._path())
+        response = self.client.request("GET", self._path())
+        data = response.get("data")
         if not isinstance(data, list):
             msg = "Unexpected response, didn't contain a list of containers."
             raise TypeError(
