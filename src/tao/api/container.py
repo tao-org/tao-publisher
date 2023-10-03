@@ -23,3 +23,9 @@ class ContainerAPI(ServiceAPI):
                 msg,
             )
         return [ContainerDescription(**d) for d in data]
+
+    def get(self, container_id: str) -> ContainerDescription:
+        """Get container description."""
+        response = self.client.request("GET", self._path(f"/{container_id}"))
+        data = response.get("data")
+        return ContainerDescription(**data)

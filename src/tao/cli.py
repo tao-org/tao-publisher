@@ -2,7 +2,7 @@
 
 import sys
 from importlib.metadata import metadata
-from typing import Any, Optional
+from typing import Any, List, Optional, Tuple
 
 import click
 from rich import prompt, traceback
@@ -11,6 +11,7 @@ from tao.api.container import ContainerAPI
 from tao.client import APIClient
 from tao.config import Config
 from tao.logging import get_console, get_logger, setup_logging
+from tao.models.container import ContainerDescription
 from tao.utils.http import is_uri
 
 logger = get_logger()
@@ -124,6 +125,42 @@ def container(ctx: click.Context) -> None:
         sys.exit(1)
 
 
+@container.command
+@click.argument("container_id", nargs=-1)
+@click.option("-j", "--json", is_flag=True, help="Display as JSON.")
+@click.option(
+    "-c",
+    "--clean",
+    is_flag=True,
+    help="Don't output default values, as well as null.",
+)
+@click.option(
+    "-a",
+    "--applications",
+    is_flag=True,
+    help="Display containers applications.",
+)
+@click.option("-l", "--logo", is_flag=True, help="Display containers logos in base64.")
+@click.pass_context
+def get(
+    ctx: click.Context,
+    container_id: Tuple[str, ...],
+    json: bool,
+    clean: bool,
+    applications: bool,
+    logo: bool,
+) -> None:
+    """Get container."""
+    api: ContainerAPI = ctx.obj[CONTEXT_API]
+    try:
+        containers = [api.get(_id) for _id in container_id]
+    except (ValueError, RuntimeError) as err:
+        logger.error(f"{err}")
+        sys.exit(1)
+
+    _display_containers(containers, applications, logo, json=json, clean=clean)
+
+
 @container.command(name="list")
 @click.option("-j", "--json", is_flag=True, help="Display as JSON.")
 @click.option(
@@ -150,46 +187,58 @@ def container_list(
     """List containers."""
     api: ContainerAPI = ctx.obj[CONTEXT_API]
 
+    try:
+        containers = api.list_all()
+    except (TypeError, ValueError, RuntimeError) as err:
+        logger.error(f"{err}")
+        sys.exit(1)
+
+    _display_containers(containers, applications, logo, json=json, clean=clean)
+
+
+def _display_containers(
+    containers: List[ContainerDescription],
+    applications: bool = False,
+    logo: bool = False,
+    json: bool = False,
+    clean: bool = False,
+) -> None:
     exclude_set = set()
     if not applications:
         exclude_set.add("applications")
     if not logo:
         exclude_set.add("logo")
 
-    try:
-        containers = api.list_all()
-        serialized_containers = [
-            c.model_dump(
-                by_alias=True,
-                exclude=exclude_set,
-                exclude_defaults=clean,
-                exclude_none=clean,
-                exclude_unset=clean,
-            )
-            for c in containers
-        ]
-        if json:
-            console.print(serialized_containers)
+    serialized_containers = [
+        c.model_dump(
+            by_alias=True,
+            exclude=exclude_set,
+            exclude_defaults=clean,
+            exclude_none=clean,
+            exclude_unset=clean,
+        )
+        for c in containers
+    ]
+    if json:
+        if len(serialized_containers) == 1:
+            console.print(serialized_containers[0])
         else:
-            for container in serialized_containers:
-                container_id = container.pop("id")
-                container_name = container.pop("name")
+            console.print(serialized_containers)
+    else:
+        for i, container in enumerate(serialized_containers):
+            container_id = container.pop("id")
+            container_name = container.pop("name")
+            console.print(
+                f"[blue]{container_name}[/blue]([purple]{container_id}[/purple])",
+                highlight=False,
+            )
+            for field, value in container.items():
                 console.print(
-                    f"[blue]{container_name}[/blue]([purple]{container_id}[/purple])",
-                    highlight=False,
+                    f"  [b]{field}[/b]: {value}",
+                    highlight=not isinstance(value, str),
                 )
-                for (
-                    field,
-                    value,
-                ) in container.items():
-                    console.print(
-                        f"  [b]{field}[/b]: {value}",
-                        highlight=not isinstance(value, str),
-                    )
+            if i < len(serialized_containers) - 1:
                 console.print()
-    except (TypeError, ValueError, RuntimeError) as err:
-        logger.error(f"{err}")
-        sys.exit(1)
 
 
 if __name__ == "__main__":
