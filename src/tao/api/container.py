@@ -4,7 +4,7 @@
 from typing import List
 
 from tao.exceptions import RequestResponseError
-from tao.models.container import ContainerDescription
+from tao.models.container import Container
 
 from ._base import ServiceAPI
 
@@ -14,7 +14,7 @@ class ContainerAPI(ServiceAPI):
 
     __api__ = "/docker"
 
-    def list_all(self) -> List[ContainerDescription]:
+    def list_all(self) -> List[Container]:
         """List containers registered in TAO.
 
         :raises: :class:`pydantic.ValidationError`
@@ -25,9 +25,9 @@ class ContainerAPI(ServiceAPI):
         if not isinstance(data, list):
             msg = "Unexpected response, didn't contain a list of containers."
             raise RequestResponseError(msg)
-        return [ContainerDescription(**d) for d in data]
+        return [Container(**d) for d in data]
 
-    def get(self, container_id: str) -> ContainerDescription:
+    def get(self, container_id: str) -> Container:
         """Get container description.
 
         :raises: :class:`pydantic.ValidationError`
@@ -35,7 +35,7 @@ class ContainerAPI(ServiceAPI):
         """
         response = self.client.request("GET", self._path(f"/{container_id}"))
         data = response.get("data")
-        return ContainerDescription(**data)
+        return Container(**data)
 
     def delete(self, container_id: str) -> None:
         """Delete container.

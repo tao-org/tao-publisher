@@ -1,5 +1,5 @@
 """Models module."""
 
-from .container import ContainerDescription
+from .container import Container
 
-__all__ = ["ContainerDescription"]
+__all__ = ["Container"]

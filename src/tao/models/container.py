@@ -5,8 +5,8 @@ from typing import Any, List, Optional
 from pydantic import BaseModel, Field
 
 
-class ContainerDescription(BaseModel):
-    """TAO container description model."""
+class Container(BaseModel):
+    """TAO container model."""
 
     id_: str = Field(alias="id")
     name: str

@@ -13,7 +13,7 @@ from tao.client import APIClient
 from tao.config import Config
 from tao.exceptions import ConfigurationError, LoginError, RequestError
 from tao.logging import get_console, get_logger, setup_logging
-from tao.models.container import ContainerDescription
+from tao.models.container import Container
 from tao.utils.http import is_uri
 
 logger = get_logger()
@@ -238,7 +238,7 @@ def container_list(
 
 
 def _display_containers(
-    containers: List[ContainerDescription],
+    containers: List[Container],
     applications: bool = False,
     logo: bool = False,
     json_format: bool = False,
