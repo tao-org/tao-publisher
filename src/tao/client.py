@@ -24,7 +24,10 @@ class APIClient:
     :raises: :class:`~tao.exceptions.ConfigurationError`
     """
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Optional[Config] = None) -> None:
+        if not config:
+            config = Config()
+
         if not config.url:
             raise ConfigurationError(field="URL")
 
