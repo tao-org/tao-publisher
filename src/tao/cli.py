@@ -161,7 +161,7 @@ def delete(
 
 @container.command
 @click.argument("container_id", nargs=-1)
-@click.option("-j", "--json", is_flag=True, help="Display as JSON.")
+@click.option("-j", "--json-format", is_flag=True, help="Print as JSON.")
 @click.option(
     "-c",
     "--clean",
@@ -179,7 +179,7 @@ def delete(
 def get(
     ctx: click.Context,
     container_id: Tuple[str, ...],
-    json: bool,
+    json_format: bool,
     clean: bool,
     applications: bool,
     logo: bool,
@@ -192,11 +192,17 @@ def get(
         logger.error(f"{err}")
         sys.exit(1)
 
-    _display_containers(containers, applications, logo, json=json, clean=clean)
+    _display_containers(
+        containers,
+        applications,
+        logo,
+        json_format=json_format,
+        clean=clean,
+    )
 
 
 @container.command(name="list")
-@click.option("-j", "--json", is_flag=True, help="Display as JSON.")
+@click.option("-j", "--json-format", is_flag=True, help="Print as JSON.")
 @click.option(
     "-c",
     "--clean",
@@ -213,7 +219,7 @@ def get(
 @click.pass_context
 def container_list(
     ctx: click.Context,
-    json: bool,
+    json_format: bool,
     clean: bool,
     applications: bool,
     logo: bool,
@@ -227,14 +233,20 @@ def container_list(
         logger.error(f"{err}")
         sys.exit(1)
 
-    _display_containers(containers, applications, logo, json=json, clean=clean)
+    _display_containers(
+        containers,
+        applications,
+        logo,
+        json_format=json_format,
+        clean=clean,
+    )
 
 
 def _display_containers(
     containers: List[ContainerDescription],
     applications: bool = False,
     logo: bool = False,
-    json: bool = False,
+    json_format: bool = False,
     clean: bool = False,
 ) -> None:
     exclude_set = set()
@@ -253,11 +265,13 @@ def _display_containers(
         )
         for c in containers
     ]
-    if json:
-        if len(serialized_containers) == 1:
-            console.print(serialized_containers[0])
-        else:
-            console.print(serialized_containers)
+    if json_format:
+        json_data = (
+            serialized_containers[0]
+            if len(serialized_containers) == 1
+            else serialized_containers
+        )
+        console.print_json(data=json_data)
     else:
         for i, container in enumerate(serialized_containers):
             container_id = container.pop("id")
