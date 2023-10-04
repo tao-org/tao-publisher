@@ -78,9 +78,9 @@ def configure(ctx: click.Context, url: Optional[str]) -> None:
         config.url = url
 
     if not any(ctx.params.values()):
-        _token_repr = "[blue]SET" if config.token else None
+        _auth = "[blue]SET" if config.token else None
         console.print(f"[bold]URL:[/bold] {config.url}")
-        console.print(f"[bold]Token:[/bold] {_token_repr}")
+        console.print(f"[bold]Auth:[/bold] {_auth}")
 
 
 @main.command
