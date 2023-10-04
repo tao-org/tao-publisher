@@ -23,6 +23,7 @@ def setup_logging(verbosity: int) -> None:
                     * 1: INFO level
                     * 2: DEBUG level
                     * 3: DEBUG level with time
+    :raises: :class:`ValueError`
     """
     if verbosity < VERBOSITY_MIN or verbosity > VERBOSITY_MAX:
         msg = f"Verbosity must be {VERBOSITY_MIN}-{VERBOSITY_MAX}, got {verbosity}"

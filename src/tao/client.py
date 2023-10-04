@@ -5,6 +5,13 @@ from typing import Any, Optional, cast
 import requests
 
 from tao.config import Config
+from tao.exceptions import (
+    ConfigurationError,
+    LoginError,
+    RequestHTTPError,
+    RequestResponseError,
+    RequestResponseStatusError,
+)
 from tao.logging import get_logger
 from tao.utils.http import HTTP_401_UNAUTHORIZED
 
@@ -12,18 +19,24 @@ logger = get_logger()
 
 
 class APIClient:
-    """TAO API Client."""
+    """TAO API Client.
+
+    :raises: :class:`~tao.exceptions.ConfigurationError`
+    """
 
     def __init__(self, config: Config) -> None:
         if not config.url:
-            msg = "URL not configured"
-            raise ValueError(msg)
+            raise ConfigurationError(field="URL")
 
         self.token = config.token
         self.api_url = config.url.rstrip("/")
 
     def login(self, username: str, password: str) -> str:
-        """Login user and retrieve auth token."""
+        """Login user and retrieve auth token.
+
+        :raises: :class:`~tao.exceptions.LoginError`
+        :raises: :class:`~tao.exceptions.RequestError`
+        """
         response = self.request(
             "POST",
             "/auth/login",
@@ -37,7 +50,7 @@ class APIClient:
 
         logger.debug(f"Login data: {data}")
         msg = "Login response missing authToken"
-        raise RuntimeError(msg)
+        raise LoginError(msg)
 
     def request(
         self,
@@ -45,7 +58,12 @@ class APIClient:
         api_path: str,
         data: Optional[Any] = None,  ## noqa: ANN401
     ) -> Any:  ## noqa: ANN401
-        """Send request to TAO API."""
+        """Send request to TAO API.
+
+        :raises: :class:`~tao.exceptions.RequestHTTPError`
+        :raises: :class:`~tao.exceptions.RequestResponseError`
+        :raises: :class:`~tao.exceptions.RequestResponseStatusError`
+        """
         headers = {}
         if self.token:
             headers["X-Auth-Token"] = self.token
@@ -63,23 +81,21 @@ class APIClient:
                 status = response_json.get("status")
                 if status == "SUCCEEDED":
                     return response_json
-                raise RuntimeError(
-                    response_json.get(
-                        "message",
-                        f"Request status: {status}",
-                    ),
-                )
-            logger.debug(f"Response content: {response.content.decode()}")
+                raise RequestResponseStatusError(response_json)
+            logger.debug(f'Response content: "{response.text}"')
             msg = "Unexpected server response, JSON is malformed."
-            raise RuntimeError(msg)
+            raise RequestResponseError(msg)
         except requests.JSONDecodeError as err:
-            msg += "Unexpected server response, expected JSON format."
-            raise RuntimeError(msg) from err
+            logger.debug(f'Response content: "{response.text}"')
+            msg = "Unexpected server response, expected JSON format."
+            raise RequestResponseError(msg) from err
         except requests.HTTPError as err:
             if err.response.status_code == HTTP_401_UNAUTHORIZED:
-                msg = "Authentication failed.\n"
-                msg += "Please verify your username and password."
+                reason = "Please verify your username and password."
             else:
-                msg = "Request failed.\n"
-                msg += f"HTTP {err.response.status_code}"
-            raise RuntimeError(msg) from err
+                reason = None
+            raise RequestHTTPError(
+                err.response.status_code,
+                reason=reason,
+                http_error=err,
+            ) from err

@@ -5,11 +5,13 @@ from importlib.metadata import metadata
 from typing import Any, List, Optional, Tuple
 
 import click
+from pydantic import ValidationError
 from rich import prompt, traceback
 
 from tao.api.container import ContainerAPI
 from tao.client import APIClient
 from tao.config import Config
+from tao.exceptions import ConfigurationError, LoginError, RequestError
 from tao.logging import get_console, get_logger, setup_logging
 from tao.models.container import ContainerDescription
 from tao.utils.http import is_uri
@@ -89,8 +91,8 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
     """Authenticate with API."""
     config: Config = ctx.obj[CONTEXT_CONFIG]
     try:
-        api = APIClient(config=config)
-    except ValueError as err:
+        client = APIClient(config=config)
+    except ConfigurationError as err:
         logger.error(f"{err}")
         sys.exit(1)
 
@@ -100,8 +102,8 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
         password = prompt.Prompt.ask("Enter your password", password=True)
 
     try:
-        token = api.login(username, password)
-    except RuntimeError as err:
+        token = client.login(username, password)
+    except (LoginError, RequestError) as err:
         logger.error(f"{err}")
         sys.exit(1)
 
@@ -120,7 +122,7 @@ def container(ctx: click.Context) -> None:
         api = ContainerAPI(client=client)
         ctx.obj[CONTEXT_CLIENT] = client
         ctx.obj[CONTEXT_API] = api
-    except ValueError as err:
+    except ConfigurationError as err:
         logger.error(f"{err}")
         sys.exit(1)
 
@@ -150,7 +152,7 @@ def delete(
             else:
                 logger.info(f"Container '{container.name}' was not deleted.")
 
-        except (ValueError, RuntimeError) as err:  ## noqa: PERF203
+        except (ValidationError, RequestError) as err:  ## noqa: PERF203
             if not ignore:
                 logger.error(f"{err}")
                 sys.exit(1)
@@ -186,7 +188,7 @@ def get(
     api: ContainerAPI = ctx.obj[CONTEXT_API]
     try:
         containers = [api.get(_id) for _id in container_id]
-    except (ValueError, RuntimeError) as err:
+    except (ValidationError, RequestError) as err:
         logger.error(f"{err}")
         sys.exit(1)
 
@@ -221,7 +223,7 @@ def container_list(
 
     try:
         containers = api.list_all()
-    except (TypeError, ValueError, RuntimeError) as err:
+    except (ValidationError, RequestError) as err:
         logger.error(f"{err}")
         sys.exit(1)
 
