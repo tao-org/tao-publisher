@@ -2,7 +2,7 @@
 
 import sys
 from importlib.metadata import metadata
-from typing import Any, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import click
 from pydantic import ValidationError
@@ -43,14 +43,6 @@ def main(ctx: click.Context, verbose: int) -> None:
     ctx.obj[CONTEXT_CONFIG] = Config()
 
 
-@main.result_callback()
-@click.pass_context
-def _callback(*args: Any, **kwargs: Any) -> None:
-    ctx: click.Context = args[0]
-    config: Config = ctx.obj[CONTEXT_CONFIG]
-    config.write()
-
-
 @main.command()
 def version() -> None:
     """Print version and exit."""
@@ -77,7 +69,9 @@ def configure(ctx: click.Context, url: Optional[str]) -> None:
         logger.info(f"URL configured: {url}")
         config.url = url
 
-    if not any(ctx.params.values()):
+    if any(ctx.params.values()):
+        config.write()
+    else:
         _auth = "[blue]SET" if config.token else None
         console.print(f"[bold]URL:[/bold] {config.url}")
         console.print(f"[bold]Auth:[/bold] {_auth}")
@@ -110,6 +104,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
     logger.info("Auth token retrieved.")
     logger.debug(f"Auth token: {token}")
     config.token = token
+    config.write()
 
 
 @main.group
