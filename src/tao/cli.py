@@ -197,6 +197,36 @@ def get(
 
 
 @container.command(name="list")
+@click.option(
+    "-s",
+    "--sort",
+    type=click.Choice(
+        [el.value for el in ContainerAPI.SortDirection],
+        case_sensitive=False,
+    ),
+    default=None,
+    help="Sort direction.",
+)
+@click.option(
+    "-f",
+    "--sort-field",
+    default=None,
+    help="Sort by container field value.",
+)
+@click.option(
+    "-p",
+    "--page",
+    type=int,
+    default=None,
+    help="Page number.",
+)
+@click.option(
+    "--page-size",
+    type=int,
+    default=10,
+    show_default=True,
+    help="Page size.",
+)
 @click.option("-j", "--json-format", is_flag=True, help="Print as JSON.")
 @click.option(
     "-c",
@@ -214,6 +244,10 @@ def get(
 @click.pass_context
 def container_list(
     ctx: click.Context,
+    sort: Optional[str],
+    sort_field: Optional[str],
+    page: Optional[int],
+    page_size: int,
     json_format: bool,
     clean: bool,
     applications: bool,
@@ -223,7 +257,14 @@ def container_list(
     api: ContainerAPI = ctx.obj[CONTEXT_API]
 
     try:
-        containers = api.list_all()
+        sort_direction = ContainerAPI.SortDirection[sort] if sort else None
+        containers = api.list(
+            page_number=page,
+            page_size=page_size if page else None,
+            sort_by_field=sort_field,
+            sort_direction=sort_direction,
+        )
+        logger.debug(f"Containers count: {len(containers)}")
     except (ValidationError, RequestError) as err:
         logger.error(f"{err}")
         sys.exit(1)

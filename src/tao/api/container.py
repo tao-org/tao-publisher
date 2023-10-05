@@ -1,7 +1,8 @@
 """Container-related API definitions."""
 
 
-from typing import List
+from enum import Enum
+from typing import List, Optional
 
 from tao.exceptions import RequestResponseError
 from tao.models.container import Container
@@ -14,13 +15,32 @@ class ContainerAPI(ServiceAPI):
 
     __api__ = "/docker"
 
-    def list_all(self) -> List[Container]:
+    class SortDirection(str, Enum):
+        """Available sort options."""
+
+        ASC = "ASC"
+        DESC = "DESC"
+
+    def list(  ## noqa: A003
+        self,
+        page_number: Optional[int] = None,
+        page_size: Optional[int] = None,
+        sort_by_field: Optional[str] = None,
+        sort_direction: Optional[SortDirection] = None,
+    ) -> List[Container]:
         """List containers registered in TAO.
 
         :raises: :class:`pydantic.ValidationError`
         :raises: :class:`~tao.exceptions.RequestError`
         """
-        response = self.client.request("GET", self._path())
+        query_params = {
+            "pageNumber": page_number,
+            "pageSize": page_size,
+            "sortByField": sort_by_field,
+            "sortDirection": sort_direction.value if sort_direction else None,
+        }
+        params = {k: str(v) for k, v in query_params.items() if v}
+        response = self.client.request("GET", self._path(), params=params)
         data = response.get("data")
         if not isinstance(data, list):
             msg = "Unexpected response, didn't contain a list of containers."

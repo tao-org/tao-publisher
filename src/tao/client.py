@@ -1,6 +1,6 @@
 """TAO API client module."""
 
-from typing import Any, Optional, cast
+from typing import Any, Dict, Optional, cast
 
 import requests
 
@@ -59,6 +59,7 @@ class APIClient:
         self,
         method: str,
         api_path: str,
+        params: Optional[Dict[str, str]] = None,
         data: Optional[Any] = None,  ## noqa: ANN401
     ) -> Any:  ## noqa: ANN401
         """Send request to TAO API.
@@ -73,6 +74,7 @@ class APIClient:
         response = requests.request(
             method=method,
             url=f"{self.api_url}/{api_path.lstrip('/')}",
+            params=params,
             headers=headers,
             data=data,
             timeout=30,
