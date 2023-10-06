@@ -122,12 +122,12 @@ def container(ctx: click.Context) -> None:
         sys.exit(1)
 
 
-@container.command
+@container.command(name="delete")
 @click.argument("container_id", nargs=-1)
 @click.option("-y", "--yes", is_flag=True, help="Confirm container deletion.")
 @click.option("-i", "--ignore", is_flag=True, help="Ignore non-existing containers.")
 @click.pass_context
-def delete(
+def container_delete(
     ctx: click.Context,
     container_id: Tuple[str, ...],
     yes: bool,
@@ -154,7 +154,7 @@ def delete(
             logger.debug(f"{err}")
 
 
-@container.command
+@container.command(name="get")
 @click.argument("container_id", nargs=-1)
 @click.option("-j", "--json-format", is_flag=True, help="Print as JSON.")
 @click.option(
@@ -171,7 +171,7 @@ def delete(
 )
 @click.option("-l", "--logo", is_flag=True, help="Display containers logos in base64.")
 @click.pass_context
-def get(
+def container_get(
     ctx: click.Context,
     container_id: Tuple[str, ...],
     json_format: bool,
