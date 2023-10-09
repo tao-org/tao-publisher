@@ -1,37 +1,61 @@
 """TAO container models/schemas."""
 
+from pathlib import Path
 from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-
-class Container(BaseModel):
-    """TAO container model."""
-
-    id_: str = Field(alias="id")
-    name: str
-    description: str
-    type_: str = Field(alias="type")
-    tag: str
-    application_path: Optional[str] = Field(alias="applicationPath", default=None)
-    logo: Optional[str] = Field(default=None)
-    applications: List["Application"] = Field(default_factory=list)
-    format_: List[str] = Field(alias="format", default_factory=list)
-    common_parameters: Optional[str] = Field(alias="commonParameters", default=None)
-    format_name_parameter: Optional[str] = Field(
-        alias="formatNameParameter",
-        default=None,
-    )
-    owner_id: Optional[str] = Field(alias="ownerId", default=None)
+from .component import ComponentDescriptor
 
 
 class Application(BaseModel):
     """TAO Application model."""
 
-    path: str
+    path: Path
     name: str
     memory_requirements: int = Field(alias="memoryRequirements")
     parallel_flag_template: Optional[str] = Field(
         alias="parallelFlagTemplate",
         default=None,
+    )
+
+
+class ContainerDescriptor(BaseModel):
+    """Container descriptor."""
+
+    id_: str = Field(alias="id")
+    name: str
+    description: str
+    tag: str = Field(default="latest")
+    application_path: Optional[str] = Field(alias="applicationPath", default=None)
+    format_: List[str] = Field(alias="format", default_factory=list)
+    format_name_parameter: Optional[str] = Field(
+        alias="formatNameParameter",
+        default=None,
+    )
+    common_parameters: Optional[str] = Field(alias="commonParameters", default=None)
+    applications: List[Application] = Field(default_factory=list)
+
+
+class Container(ContainerDescriptor):
+    """Container description as returned by get and list endpoints."""
+
+    type_: str = Field(alias="type")
+    logo: Optional[str] = Field(default=None)
+    owner_id: Optional[str] = Field(alias="ownerId", default=None)
+
+
+class ContainerSpec(BaseModel):
+    """Container specification."""
+
+    name: str = Field(default="")
+    description: str = Field(default="")
+    system: bool = Field(default=True)
+    container_logo: Optional[Path] = Field(alias="containerLogo", default=None)
+    container: ContainerDescriptor
+    components: List[ComponentDescriptor] = Field(default_factory=list)
+    docker_files: List[Path] = Field(alias="dockerFiles", default_factory=list)
+    auxiliary_files: List[Path] = Field(
+        alias="auxiliaryFiles",
+        default_factory=list,
     )
