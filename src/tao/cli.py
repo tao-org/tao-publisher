@@ -11,7 +11,7 @@ from rich import prompt, traceback
 
 from tao.api import APIClient, ContainerAPI
 from tao.config import Config
-from tao.core import init_container_file
+from tao.core import init_container_file, read_container_file
 from tao.exceptions import ConfigurationError, LoginError, RequestError
 from tao.logging import get_console, get_logger, setup_logging
 from tao.models import Container
@@ -146,6 +146,24 @@ def container_init(name: str, path: Path, json_file: bool) -> None:
         )
         logger.info(f"Container definition file created: {file_path}")
     except FileExistsError as err:
+        logger.error(f"{err}")
+        sys.exit(1)
+
+
+@container.command("read")
+@click.argument(
+    "file_path",
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True, path_type=Path),
+)
+def container_read(file_path: Path) -> None:
+    """Read container definition file."""
+    try:
+        container_spec = read_container_file(file_path)
+        console.print(container_spec)
+    except ValidationError as err:
+        logger.error(
+            "Container definition is invalid, please check the following validation errors:",
+        )
         logger.error(f"{err}")
         sys.exit(1)
 

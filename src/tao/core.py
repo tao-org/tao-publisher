@@ -5,8 +5,13 @@ from pathlib import Path
 
 from tao.models.component import ComponentDescriptor, ParameterDescriptor
 from tao.models.container import Application, ContainerDescriptor, ContainerSpec
-from tao.utils.file import write_file
+from tao.utils.file import parse_file, write_file
 from tao.utils.http import slugify
+
+
+def read_container_file(file_path: Path) -> ContainerSpec:
+    """Read container spec from file."""
+    return ContainerSpec(**parse_file(file_path))
 
 
 def init_container_file(container_name: str, path: Path, file_format: str) -> Path:
