@@ -2,6 +2,7 @@
 
 import sys
 from importlib.metadata import metadata
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 import click
@@ -10,6 +11,7 @@ from rich import prompt, traceback
 
 from tao.api import APIClient, ContainerAPI
 from tao.config import Config
+from tao.core import init_container_file
 from tao.exceptions import ConfigurationError, LoginError, RequestError
 from tao.logging import get_console, get_logger, setup_logging
 from tao.models import Container
@@ -117,6 +119,33 @@ def container(ctx: click.Context) -> None:
         ctx.obj[CONTEXT_CLIENT] = client
         ctx.obj[CONTEXT_API] = api
     except ConfigurationError as err:
+        logger.error(f"{err}")
+        sys.exit(1)
+
+
+@container.command(name="init")
+@click.argument("name")
+@click.argument(
+    "path",
+    type=click.Path(exists=True, file_okay=False, resolve_path=True, path_type=Path),
+)
+@click.option(
+    "-j",
+    "--json-file",
+    is_flag=True,
+    help="Write file in JSON instead of YAML.",
+)
+def container_init(name: str, path: Path, json_file: bool) -> None:
+    """Create container definition file."""
+    file_format = "json" if json_file else "yaml"
+    try:
+        file_path = init_container_file(
+            container_name=name,
+            path=path,
+            file_format=file_format,
+        )
+        logger.info(f"Container definition file created: {file_path}")
+    except FileExistsError as err:
         logger.error(f"{err}")
         sys.exit(1)
 
