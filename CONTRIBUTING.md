@@ -52,7 +52,7 @@ tools on your system:
 ### Clone the repository
 
 ```bash
-git clone https://gitlab.si.c-s.fr/clement.guichard/tao-publisher
+git clone git@gitlab.si.c-s.fr:space_platforms/dunia/tao-publisher.git
 ```
 
 ### Environment setup
@@ -105,8 +105,8 @@ on how to reproduce it must be provided, and if possible visuals
 
 There are two kinds of issue:
 
-- [Bug Report](https://gitlab.si.c-s.fr/clement.guichard/tao-publisher/issues/new?issuable_template=bug_report)
-- [Feature Request](https://gitlab.si.c-s.fr/clement.guichard/tao-publisher/issues/new?issuable_template=feature_request)
+- [Bug Report](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues/new?issuable_template=bug_report)
+- [Feature Request](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues/new?issuable_template=feature_request)
 
 Click on these links to visit the issue creation page, with a simple
 template to guide you.

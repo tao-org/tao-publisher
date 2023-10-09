@@ -5,7 +5,7 @@ site_author: "Clément GUICHARD"
 
 # Repository
 repo_name: "clement.guichard/tao-publisher"
-repo_url: "https://gitlab.si.c-s.fr/clement.guichard/tao-publisher"
+repo_url: "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher"
 edit_uri: edit/main/docs/
 
 # Copyright
@@ -67,4 +67,4 @@ nav:
       - API reference:
           - developers/api_reference/index.md
       - CLI reference: developers/cli_reference.md
-      - Source code: "https://gitlab.si.c-s.fr/clement.guichard/tao-publisher"
+      - Source code: "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher"

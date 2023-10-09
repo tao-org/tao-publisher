@@ -3,14 +3,14 @@
 This project can be installed from its source code.
 
 ```bash
-pip install git+https://gitlab.si.c-s.fr/clement.guichard/tao-publisher
-# pip install git+https://gitlab.si.c-s.fr/clement.guichard/tao-publisher@<tag>
+pip install git+https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher
+# pip install git+https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher@<tag>
 ```
 
 You can also clone the repo and install from it locally:
 
 ```bash
-git clone https://gitlab.si.c-s.fr/clement.guichard/tao-publisher
+git clone https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher
 cd tao-publisher
 pip install .
 ```

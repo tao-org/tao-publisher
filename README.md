@@ -7,9 +7,9 @@
 ![Security](https://img.shields.io/badge/security-bandit,%20safety-purple?style=flat-square)
 ![Stability](https://img.shields.io/badge/stability-experimental-orange?style=flat-square)
 
-[Merge Request](https://gitlab.si.c-s.fr/clement.guichard/tao-publisher/merge_requests) **·**
-[Bug Report](https://gitlab.si.c-s.fr/clement.guichard/tao-publisher/issues/new?issuable_template=bug_report) **·**
-[Feature Request](https://gitlab.si.c-s.fr/clement.guichard/tao-publisher/issues/new?issuable_template=feature_request)
+[Merge Request](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/merge_requests) **·**
+[Bug Report](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues/new?issuable_template=bug_report) **·**
+[Feature Request](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues/new?issuable_template=feature_request)
 
 The TAO Publisher is a tool developed to provide an easy publishing interface with [TAO](https://hub.eoafrica-dunia.org/ui/sap.html) through a Python API / CLI.
 
@@ -26,8 +26,8 @@ The TAO Publisher is a tool developed to provide an easy publishing interface wi
 ### Installation
 
 ``` bash
-pip install git+https://gitlab.si.c-s.fr/clement.guichard/tao-publisher
-# pip install git+https://gitlab.si.c-s.fr/clement.guichard/tao-publisher@<tag>
+pip install git+https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher
+# pip install git+https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher@<tag>
 ```
 
 ### Usage

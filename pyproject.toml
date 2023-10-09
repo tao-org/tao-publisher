@@ -37,9 +37,9 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-"Homepage" = "https://gitlab.si.c-s.fr/clement.guichard/tao-publisher"
-"Source" = "https://gitlab.si.c-s.fr/clement.guichard/tao-publisher"
-"Bug Tracker" = "https://gitlab.si.c-s.fr/clement.guichard/tao-publisher/issues"
+"Homepage" = "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher"
+"Source" = "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher"
+"Bug Tracker" = "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues"
 
 [project.optional-dependencies]
 dev = [
