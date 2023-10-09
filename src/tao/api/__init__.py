@@ -1,5 +1,6 @@
 """API module."""
 
-from .container import ContainerAPI
+from .client import APIClient
+from .services import ContainerAPI
 
-__all__ = ["ContainerAPI"]
+__all__ = ["APIClient", "ContainerAPI"]

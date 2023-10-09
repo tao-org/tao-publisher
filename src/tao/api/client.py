@@ -1,4 +1,4 @@
-"""TAO API client module."""
+"""API client module."""
 
 from typing import Any, Dict, Optional, cast
 

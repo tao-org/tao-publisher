@@ -2,8 +2,7 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
-from tao.api import ContainerAPI
-from tao.client import APIClient
+from tao.api import APIClient, ContainerAPI
 from tao.config import Config
 
 try:

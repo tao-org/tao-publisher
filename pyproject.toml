@@ -33,6 +33,7 @@ dependencies = [
     "PyYAML~=6.0",
     "requests~=2.31",
     "rich~=13.5",
+    "typing-extensions~=4.8",
 ]
 dynamic = ["version"]
 

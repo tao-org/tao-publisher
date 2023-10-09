@@ -1,4 +1,4 @@
-from tao.client import APIClient
+from tao.api.client import APIClient
 
 
 class ServiceAPI:

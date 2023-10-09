@@ -8,12 +8,11 @@ import click
 from pydantic import ValidationError
 from rich import prompt, traceback
 
-from tao.api.container import ContainerAPI
-from tao.client import APIClient
+from tao.api import APIClient, ContainerAPI
 from tao.config import Config
 from tao.exceptions import ConfigurationError, LoginError, RequestError
 from tao.logging import get_console, get_logger, setup_logging
-from tao.models.container import Container
+from tao.models import Container
 from tao.utils.http import is_uri
 
 logger = get_logger()
