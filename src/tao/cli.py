@@ -168,6 +168,26 @@ def container_read(file_path: Path) -> None:
         sys.exit(1)
 
 
+@container.command("register")
+@click.argument(
+    "file_path",
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True, path_type=Path),
+)
+@click.pass_context
+def container_register(ctx: click.Context, file_path: Path) -> None:
+    """Register container."""
+    config: Config = ctx.obj[CONTEXT_CONFIG]
+    api: ContainerAPI = ctx.obj[CONTEXT_API]
+    try:
+        container_spec = read_container_file(file_path)
+        logger.debug("Container definition read")
+        api.register(container_spec, ctx_path=file_path.parent)
+        logger.info(f"Please check your notifications at: {config.url}")
+    except (ValidationError, RequestError) as err:
+        logger.error(f"{err}")
+        sys.exit(1)
+
+
 @container.command(name="delete")
 @click.argument("container_id", nargs=-1)
 @click.option("-y", "--yes", is_flag=True, help="Confirm container deletion.")
