@@ -12,7 +12,7 @@ from rich import prompt, traceback
 from tao.api import APIClient, ContainerAPI
 from tao.config import Config
 from tao.core import init_container_file, read_container_file
-from tao.exceptions import ConfigurationError, LoginError, RequestError
+from tao.exceptions import ConfigurationError, RequestError
 from tao.logging import get_console, get_logger, setup_logging
 from tao.models import Container
 from tao.utils.http import is_uri
@@ -98,7 +98,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
 
     try:
         token = client.login(username, password)
-    except (LoginError, RequestError) as err:
+    except RequestError as err:
         logger.error(f"{err}")
         sys.exit(1)
 

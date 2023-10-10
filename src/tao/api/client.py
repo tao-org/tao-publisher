@@ -37,16 +37,20 @@ class APIClient:
     def login(self, username: str, password: str) -> str:
         """Login user and retrieve auth token.
 
-        :raises: :class:`~tao.exceptions.LoginError`
         :raises: :class:`~tao.exceptions.RequestError`
         """
-        response = self.request(
-            "POST",
-            "/auth/login",
-            data={"username": username, "password": password},
-        )
-        data = response.get("data")
+        try:
+            response = self.request(
+                "POST",
+                "/auth/login",
+                data={"username": username, "password": password},
+            )
+        except RequestResponseError as err:
+            msg = "Authentication failed.\n"
+            msg += "Please verify your username and password."
+            raise LoginError(msg) from err
 
+        data = response.get("data")
         if isinstance(data, dict) and "authToken" in data:
             self.token = data["authToken"]
             return cast(str, self.token)
