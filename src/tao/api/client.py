@@ -65,6 +65,7 @@ class APIClient:
         api_path: str,
         params: Optional[Dict[str, str]] = None,
         data: Optional[Any] = None,  ## noqa: ANN401
+        files: Optional[Any] = None,  ## noqa: ANN401
     ) -> Any:  ## noqa: ANN401
         """Send request to TAO API.
 
@@ -75,14 +76,17 @@ class APIClient:
         headers = {}
         if self.token:
             headers["X-Auth-Token"] = self.token
+
         response = requests.request(
             method=method,
             url=f"{self.api_url}/{api_path.lstrip('/')}",
             params=params,
             headers=headers,
             data=data,
+            files=files,
             timeout=30,
         )
+
         try:
             response.raise_for_status()
             response_json = response.json()
