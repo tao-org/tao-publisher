@@ -64,7 +64,7 @@ def configure(ctx: click.Context, url: Optional[str]) -> None:
 
     if url:
         if not is_uri(url):
-            logger.error("Given URL is not a valid URI.")
+            logger.error("Given URL is not a valid URI")
             sys.exit(1)
 
         logger.info(f"URL configured: {url}")
@@ -102,7 +102,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
         logger.error(f"{err}")
         sys.exit(1)
 
-    logger.info("Auth token retrieved.")
+    logger.info("Auth token retrieved")
     logger.debug(f"Auth token: {token}")
     config.token = token
     config.write()
@@ -191,7 +191,7 @@ def container_delete(
                 api.delete(_id)
                 logger.info(f"Container deleted: '{container.name}'")
             else:
-                logger.info(f"Container '{container.name}' was not deleted.")
+                logger.info(f"Container '{container.name}' was not deleted")
 
         except (ValidationError, RequestError) as err:  ## noqa: PERF203
             if not ignore:

@@ -11,7 +11,7 @@ class ConfigurationError(ValueError):
     """Configuration error."""
 
     def __init__(self, field: str) -> None:
-        super().__init__(f"{field} not configured correctly.")
+        super().__init__(f"{field} not configured correctly")
 
 
 class RequestError(RuntimeError):
