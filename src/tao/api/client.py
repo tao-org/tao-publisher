@@ -66,7 +66,7 @@ class APIClient:
         params: Optional[Dict[str, str]] = None,
         data: Optional[Any] = None,  ## noqa: ANN401
         files: Optional[Any] = None,  ## noqa: ANN401
-    ) -> Any:  ## noqa: ANN401
+    ) -> Dict[str, Any]:
         """Send request to TAO API.
 
         :raises: :class:`~tao.exceptions.RequestHTTPError`

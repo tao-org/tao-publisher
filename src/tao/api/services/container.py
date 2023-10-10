@@ -2,7 +2,7 @@
 
 
 from enum import Enum
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from tao.exceptions import RequestResponseError
 from tao.models.container import Container
@@ -54,7 +54,7 @@ class ContainerAPI(ServiceAPI):
         :raises: :class:`~tao.exceptions.RequestError`
         """
         response = self.client.request("GET", self._path(f"/{container_id}"))
-        data = response.get("data")
+        data: Dict[str, Any] = response.get("data", {})
         return Container(**data)
 
     def delete(self, container_id: str) -> None:
