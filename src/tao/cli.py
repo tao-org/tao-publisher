@@ -36,13 +36,20 @@ CONTEXT_API = "api"
     "-v",
     "--verbose",
     count=True,
-    help="Control the verbosity of the logs. For maximum verbosity, type -vvv",
+    help="Control the verbosity of the logs. For maximum verbosity, type -vv",
+)
+@click.option(
+    "-q",
+    "--quiet",
+    is_flag=True,
+    help="Minimal output.",
 )
 @click.pass_context
-def main(ctx: click.Context, verbose: int) -> None:
+def main(ctx: click.Context, verbose: int, quiet: bool) -> None:
     """TAO Publisher CLI."""
+    _verbosity = 0 if quiet else verbose + 1
     traceback.install(show_locals=True, suppress=[click])
-    setup_logging(verbosity=verbose)
+    setup_logging(verbosity=_verbosity)
     ctx.ensure_object(dict)
 
     logger.debug("Load config")
