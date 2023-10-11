@@ -56,7 +56,7 @@ class APIClient:
             return cast(str, self.token)
 
         logger.debug(f"Login data: {data}")
-        msg = "Login response missing authToken"
+        msg = 'Login response missing "authToken".'
         raise LoginError(msg)
 
     def request(
@@ -69,9 +69,7 @@ class APIClient:
     ) -> Dict[str, Any]:
         """Send request to TAO API.
 
-        :raises: :class:`~tao.exceptions.RequestHTTPError`
-        :raises: :class:`~tao.exceptions.RequestResponseError`
-        :raises: :class:`~tao.exceptions.RequestResponseStatusError`
+        :raises: :class:`~tao.exceptions.RequestError`
         """
         headers = {}
         if self.token:

@@ -191,7 +191,7 @@ select = [
     "INP", "ISC", "N", "PIE", "PT", "PGH", "PTH", "PYI", "Q", "RET", "RSE", "S", "SIM",
     "SLF", "SLOT", "T20", "TCH", "TD", "TID", "YTT",
 ]
-ignore = ["ANN101", "ANN102", "D105", "D107", "D203", "D213", "D301", "E501", "G004", "RET504", "TD002", "TD003"]
+ignore = ["ANN101", "ANN102", "D105", "D107", "D203", "D213", "D301", "E501", "G004", "RET504", "TD002", "TD003", "TRY400"]
 fix = true
 unfixable = ["RUF005", "RUF100"]
 line-length = 88
@@ -199,7 +199,6 @@ line-length = 88
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["D104", "E402", "F401"]
 "__main__.py" = ["T201"]
-"cli.py" = ["TRY400"]
 
 [tool.ruff.pylint]
 max-args = 10

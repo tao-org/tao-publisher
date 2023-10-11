@@ -2,6 +2,7 @@
 
 from typing import Any, Dict, Optional
 
+from pydantic import ValidationError
 from requests import HTTPError
 
 from tao.utils.http import HTTP_401_UNAUTHORIZED
@@ -11,7 +12,31 @@ class ConfigurationError(ValueError):
     """Configuration error."""
 
     def __init__(self, field: str) -> None:
-        super().__init__(f"{field} not configured correctly")
+        super().__init__(f"{field} not configured correctly.")
+
+
+class ContainerDefinitionError(RuntimeError):
+    """Container definition validation error."""
+
+    def __init__(self, validation_error: ValidationError) -> None:
+        msg = "Container definition is invalid, "
+        msg += "please check the following validation errors:\n\n"
+        msg += str(validation_error)
+        super().__init__(msg)
+        self.validation_error = ValidationError
+        self.msg = msg
+
+
+class SchemasDifferenceError(RuntimeError):
+    """Difference in data schemas between TAO client and server."""
+
+    def __init__(self, validation_error: ValidationError) -> None:
+        msg = "Server data schemas may differ from our local schemas.\n"
+        msg += "Please contact support.\n\n"
+        msg += str(validation_error)
+        super().__init__(msg)
+        self.validation_error = ValidationError
+        self.msg = msg
 
 
 class RequestError(RuntimeError):
@@ -37,10 +62,6 @@ class RequestHTTPError(RequestError):
         self.http_error = http_error
 
 
-class RequestResponseError(RequestError):
-    """Request response error."""
-
-
 class RequestResponseStatusError(RequestError):
     """Request response status error."""
 
@@ -48,6 +69,10 @@ class RequestResponseStatusError(RequestError):
         status = response_json.get("status", "UNKNOWN")
         msg = response_json.get("message", f"Request status: {status}")
         super().__init__(msg)
+
+
+class RequestResponseError(RequestError):
+    """Request response error."""
 
 
 class LoginError(RequestResponseError):

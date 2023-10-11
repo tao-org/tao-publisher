@@ -1,3 +1,5 @@
+"""File utils module."""
+
 from typing import List
 
 from .parser import get_parser, get_valid_parsable_extensions, parse_file

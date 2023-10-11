@@ -1,13 +1,14 @@
 """Container-related API definitions."""
 
-
 import json
 import logging
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from tao.exceptions import RequestResponseError
+from pydantic import ValidationError
+
+from tao.exceptions import RequestResponseError, SchemasDifferenceError
 from tao.logging import get_logger
 from tao.models.container import Container, ContainerSpec
 from tao.utils.http import SerializedFile, serialize_file, serialize_files
@@ -37,8 +38,8 @@ class ContainerAPI(ServiceAPI):
     ) -> List[Container]:
         """List containers registered in TAO.
 
-        :raises: :class:`pydantic.ValidationError`
         :raises: :class:`~tao.exceptions.RequestError`
+        :raises: :class:`~tao.exceptions.SchemasDifferenceError`
         """
         query_params = {
             "pageNumber": page_number,
@@ -47,44 +48,61 @@ class ContainerAPI(ServiceAPI):
             "sortDirection": sort_direction.value if sort_direction else None,
         }
         params = {k: str(v) for k, v in query_params.items() if v}
-        response = self.client.request("GET", self._path(), params=params)
+        response = self.client.request("GET", self.url(), params=params)
+
         data = response.get("data")
         if not isinstance(data, list):
-            msg = "Unexpected response, didn't contain a list of containers."
+            msg = "Unexpected response, data didn't contain a list of containers."
             raise RequestResponseError(msg)
-        return [Container(**d) for d in data]
+
+        try:
+            return [Container(**d) for d in data]
+        except TypeError as err:
+            msg = "Unexpected response, data didn't contain a list mappings."
+            raise RequestResponseError(msg) from err
+        except ValidationError as err:
+            raise SchemasDifferenceError(err) from err
 
     def get(self, container_id: str) -> Container:
         """Get container description.
 
-        :raises: :class:`pydantic.ValidationError`
         :raises: :class:`~tao.exceptions.RequestError`
+        :raises: :class:`~tao.exceptions.SchemasDifferenceError`
         """
-        response = self.client.request("GET", self._path(f"/{container_id}"))
+        response = self.client.request("GET", self.url(f"/{container_id}"))
         data: Dict[str, Any] = response.get("data", {})
-        return Container(**data)
+        try:
+            return Container(**data)
+        except TypeError as err:
+            msg = "Unexpected response, data didn't contain a list mappings."
+            raise RequestResponseError(msg) from err
+        except ValidationError as err:
+            raise SchemasDifferenceError(err) from err
 
     def delete(self, container_id: str) -> None:
         """Delete container.
 
         :raises: :class:`~tao.exceptions.RequestError`
         """
-        self.client.request("DELETE", self._path(f"/{container_id}"))
+        self.client.request("DELETE", self.url(f"/{container_id}"))
 
     def register(self, container_spec: ContainerSpec, ctx_path: Path) -> None:
-        """Register new container."""
+        """Register new container.
+
+        :raises: :class:`~tao.exceptions.RequestError`
+        """
         data, files = self._prepare_container_register_request(
             container_spec,
             ctx_path=ctx_path,
         )
         logger.debug(f"Container register request\n{data=}\n{files=}")
+
         response = self.client.request(
             "POST",
-            self._path("/register"),
+            self.url("/register"),
             data=data,
             files=files,
         )
-
         message = response.get("message", response)
         logger.log(logging.DEBUG if message == response else logging.INFO, message)
 

@@ -38,20 +38,20 @@ class Config:
 
     def _read(self) -> _ConfigDict:
         if not self.config_dir.is_dir():
-            logger.debug(f"Create dir {self.config_dir}")
+            logger.debug(f"Create dir: {self.config_dir}")
             self.config_dir.mkdir(parents=True, exist_ok=True)
 
         if not self.config_file.is_file():
-            logger.debug(f"Config file not found at {self.config_file}")
+            logger.debug(f"Config file not found at: {self.config_file}")
             return _ConfigDict(url=None, token=None)
 
-        logger.debug(f"Read config from {self.config_file}")
+        logger.debug(f"Read config from: {self.config_file}")
         with self.config_file.open() as file:
             return cast(_ConfigDict, yaml.safe_load(file))
 
     def write(self) -> None:
         """Write config file."""
-        logger.debug(f"Write config to file {self.config_file}")
+        logger.debug(f"Write config to file: {self.config_file}")
         with self.config_file.open("w") as file:
             yaml.dump(self._conf, file, default_flow_style=False)
 

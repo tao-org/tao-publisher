@@ -3,6 +3,9 @@
 import uuid
 from pathlib import Path
 
+from pydantic import ValidationError
+
+from tao.exceptions import ContainerDefinitionError
 from tao.models.component import ComponentDescriptor, ParameterDescriptor
 from tao.models.container import Application, ContainerDescriptor, ContainerSpec
 from tao.utils.file import parse_file, write_file
@@ -10,12 +13,25 @@ from tao.utils.http import slugify
 
 
 def read_container_file(file_path: Path) -> ContainerSpec:
-    """Read container spec from file."""
-    return ContainerSpec(**parse_file(file_path))
+    """Read container spec from file.
+
+    :raises: :class:`FileNotFoundError`
+    :raises: :class:`~tao.utils.file.exceptions.FileExtensionInvalidError`
+    :raises: :class:`~tao.utils.file.exceptions.FileContentError`
+    :raises: :class:`~tao.utils.file.exceptions.ContainerDefinitionError`
+    """
+    try:
+        return ContainerSpec(**parse_file(file_path))
+    except ValidationError as err:
+        raise ContainerDefinitionError(err) from err
 
 
 def init_container_file(container_name: str, path: Path, file_format: str) -> Path:
-    """Create container spec file."""
+    """Create container spec file.
+
+    :raises: :class:`FileExistsError`
+    :raises: :class:`~tao.utils.file.exceptions.FileExtensionInvalidError`
+    """
     file_format = file_format.lower()
     file_name = f"{slugify(container_name)}.{file_format}"
     file_path = path / file_name

@@ -7,5 +7,5 @@ class ServiceAPI:
     def __init__(self, client: APIClient) -> None:
         self.client = client
 
-    def _path(self, path: str = "", /) -> str:
+    def url(self, path: str = "", /) -> str:
         return f"{self.__api__.rstrip('/')}/{path.lstrip('/')}"

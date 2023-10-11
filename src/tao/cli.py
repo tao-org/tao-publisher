@@ -6,15 +6,20 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 import click
-from pydantic import ValidationError
 from rich import prompt, traceback
 
 from tao.api import APIClient, ContainerAPI
 from tao.config import Config
 from tao.core import init_container_file, read_container_file
-from tao.exceptions import ConfigurationError, RequestError
+from tao.exceptions import (
+    ConfigurationError,
+    ContainerDefinitionError,
+    RequestError,
+    SchemasDifferenceError,
+)
 from tao.logging import get_console, get_logger, setup_logging
 from tao.models import Container
+from tao.utils.file.exceptions import FileContentError, FileExtensionInvalidError
 from tao.utils.http import is_uri
 
 logger = get_logger()
@@ -88,7 +93,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
     try:
         client = APIClient(config=config)
     except ConfigurationError as err:
-        logger.error(f"{err}")
+        logger.error(err)
         sys.exit(1)
 
     if not username:
@@ -99,7 +104,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
     try:
         token = client.login(username, password)
     except RequestError as err:
-        logger.error(f"{err}")
+        logger.error(err)
         sys.exit(1)
 
     logger.info("Auth token retrieved")
@@ -119,7 +124,7 @@ def container(ctx: click.Context) -> None:
         ctx.obj[CONTEXT_CLIENT] = client
         ctx.obj[CONTEXT_API] = api
     except ConfigurationError as err:
-        logger.error(f"{err}")
+        logger.error(err)
         sys.exit(1)
 
 
@@ -146,7 +151,7 @@ def container_init(name: str, path: Path, json_file: bool) -> None:
         )
         logger.info(f"Container definition file created: {file_path}")
     except FileExistsError as err:
-        logger.error(f"{err}")
+        logger.error(err)
         sys.exit(1)
 
 
@@ -160,11 +165,12 @@ def container_read(file_path: Path) -> None:
     try:
         container_spec = read_container_file(file_path)
         console.print(container_spec)
-    except ValidationError as err:
-        logger.error(
-            "Container definition is invalid, please check the following validation errors:",
-        )
-        logger.error(f"{err}")
+    except (
+        FileExtensionInvalidError,
+        FileContentError,
+        ContainerDefinitionError,
+    ) as err:
+        logger.error(err)
         sys.exit(1)
 
 
@@ -183,8 +189,13 @@ def container_register(ctx: click.Context, file_path: Path) -> None:
         logger.debug("Container definition read")
         api.register(container_spec, ctx_path=file_path.parent)
         logger.info(f"Please check your notifications at: {config.url}")
-    except (ValidationError, RequestError) as err:
-        logger.error(f"{err}")
+    except (
+        FileExtensionInvalidError,
+        FileContentError,
+        RequestError,
+        ContainerDefinitionError,
+    ) as err:
+        logger.error(err)
         sys.exit(1)
 
 
@@ -213,11 +224,14 @@ def container_delete(
             else:
                 logger.info(f"Container '{container.name}' was not deleted")
 
-        except (ValidationError, RequestError) as err:  ## noqa: PERF203
+        except SchemasDifferenceError as err:  ## noqa: PERF203
+            logger.critical(err)
+            sys.exit(1)
+        except RequestError as err:
             if not ignore:
-                logger.error(f"{err}")
+                logger.error(err)
                 sys.exit(1)
-            logger.debug(f"{err}")
+            logger.debug(err)
 
 
 @container.command(name="get")
@@ -249,8 +263,11 @@ def container_get(
     api: ContainerAPI = ctx.obj[CONTEXT_API]
     try:
         containers = [api.get(_id) for _id in container_id]
-    except (ValidationError, RequestError) as err:
-        logger.error(f"{err}")
+    except SchemasDifferenceError as err:
+        logger.critical(err)
+        sys.exit(1)
+    except RequestError as err:
+        logger.error(err)
         sys.exit(1)
 
     _display_containers(
@@ -331,8 +348,11 @@ def container_list(
             sort_direction=sort_direction,
         )
         logger.debug(f"Containers count: {len(containers)}")
-    except (ValidationError, RequestError) as err:
-        logger.error(f"{err}")
+    except SchemasDifferenceError as err:
+        logger.critical(err)
+        sys.exit(1)
+    except RequestError as err:
+        logger.error(err)
         sys.exit(1)
 
     _display_containers(
