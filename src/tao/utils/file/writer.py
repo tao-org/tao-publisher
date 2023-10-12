@@ -23,26 +23,12 @@ def get_valid_writable_extensions() -> List[str]:
     return list(extensions)
 
 
-def register_writer(*, extensions: List[str]) -> Callable[[WriterFunc], WriterFunc]:
-    """Writer decorator."""
-
-    def decorator(writer_func: WriterFunc) -> WriterFunc:
-        """Allow optional arguments for decorator."""
-
-        @wraps(writer_func)
-        def wrapper(file_path: Path, /, data: FileContent) -> None:
-            if file_path.exists():
-                msg = f"File already exists: {file_path}"
-                raise FileExistsError(msg)
-            if file_path.suffix not in extensions:
-                msg = f"Invalid file extension: {file_path}"
-                raise FileExtensionInvalidError(msg)
-            return writer_func(file_path, data)
-
-        _WRITERS[wrapper] = extensions
-        return wrapper
-
-    return decorator
+def get_writer(file_ext: str, /) -> Optional[WriterFunc]:
+    """Get writer for files with corresponding file extension."""
+    for writer_func, extensions in _WRITERS.items():
+        if file_ext in extensions:
+            return writer_func
+    return None
 
 
 def write_file(file_path: Path, /, data: FileContent) -> None:
@@ -59,35 +45,31 @@ def write_file(file_path: Path, /, data: FileContent) -> None:
     raise FileExtensionInvalidError(msg)
 
 
-def get_writer(file_ext: str, /) -> Optional[WriterFunc]:
-    """Get writer for files with corresponding file extension."""
-    for writer_func, extensions in _WRITERS.items():
-        if file_ext in extensions:
-            return writer_func
-    return None
+def _register_writer(*, extensions: List[str]) -> Callable[[WriterFunc], WriterFunc]:
+    def decorator(writer_func: WriterFunc) -> WriterFunc:
+        @wraps(writer_func)
+        def wrapper(file_path: Path, /, data: FileContent) -> None:
+            if file_path.exists():
+                msg = f"File already exists: {file_path}"
+                raise FileExistsError(msg)
+            if file_path.suffix not in extensions:
+                msg = f"Invalid file extension: {file_path}"
+                raise FileExtensionInvalidError(msg)
+            return writer_func(file_path, data)
+
+        _WRITERS[wrapper] = extensions
+        return wrapper
+
+    return decorator
 
 
-@register_writer(extensions=[".yaml", ".yml"])
-def write_yaml(file_path: Path, /, data: FileContent) -> None:
-    """YAML document writer.
-
-    Raises:
-        FileExistsError: file already exists at `file_path`.
-        tao.utils.file.exceptions.FileExtensionInvalidError:
-            file extension is not compatible.
-    """
+@_register_writer(extensions=[".yaml", ".yml"])
+def _write_yaml(file_path: Path, /, data: FileContent) -> None:
     with file_path.open("w") as file:
         yaml.dump(data, file, sort_keys=False)
 
 
-@register_writer(extensions=[".json"])
-def write_json(file_path: Path, /, data: FileContent) -> None:
-    """JSON document writer.
-
-    Raises:
-        FileExistsError: file already exists at `file_path`.
-        tao.utils.file.exceptions.FileExtensionInvalidError:
-            file extension is not compatible.
-    """
+@_register_writer(extensions=[".json"])
+def _write_json(file_path: Path, /, data: FileContent) -> None:
     with file_path.open("w") as file:
         json.dump(data, file, indent=2, sort_keys=False)
