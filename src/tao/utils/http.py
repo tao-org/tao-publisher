@@ -11,10 +11,12 @@ HTTP_401_UNAUTHORIZED = 401
 SerializedFile = Tuple[str, bytes, str]
 
 
-def is_uri(text: str, /) -> bool:
-    """Return True if text is a valid URI, False otherwise."""
+def is_url(text: str, /) -> bool:
+    """Return True if text is a valid URL, False otherwise."""
     parse_result = urlparse(text)
-    return all([parse_result.scheme, parse_result.netloc])
+    return parse_result.scheme in ["http", "https"] and all(
+        (parse_result.scheme, parse_result.netloc),
+    )
 
 
 def slugify(text: str, /) -> str:

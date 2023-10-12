@@ -20,7 +20,7 @@ from tao.exceptions import (
 from tao.logging import get_console, get_logger, setup_logging
 from tao.models import Container
 from tao.utils.file.exceptions import FileContentError, FileExtensionInvalidError
-from tao.utils.http import is_uri
+from tao.utils.http import is_url
 
 logger = get_logger()
 console = get_console()
@@ -75,8 +75,8 @@ def configure(ctx: click.Context, url: Optional[str]) -> None:
     config: Config = ctx.obj[CONTEXT_CONFIG]
 
     if url:
-        if not is_uri(url):
-            logger.error("Given URL is not a valid URI")
+        if not is_url(url):
+            logger.error("Given URL is not valid")
             sys.exit(1)
 
         logger.info(f"URL configured: {url}")
