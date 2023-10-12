@@ -1,23 +1,28 @@
 # Project information
 site_name: "TAO Publisher"
 site_description: "TAO application publisher API/CLI"
-site_author: "Clément GUICHARD"
+site_author: "CS Group"
+copyright: "Copyright &copy; 2023, CS GROUP"
 
 # Repository
-repo_name: "clement.guichard/tao-publisher"
+repo_name: "csgroup/tao-publisher"
 repo_url: "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher"
-edit_uri: edit/main/docs/
-
-# Copyright
-copyright: "Copyright &copy; 2023, CS GROUP https://www.csgroup.eu/"
+edit_uri: edit/master/docs/source
 
 # Configuration
 site_dir: "build/html"
 docs_dir: "source"
 theme:
   name: material
+  language: en
   features:
+    - content.action.edit
+    - content.action.view
+    - content.code.copy
+    - content.tooltips
+    - navigation.footer
     - navigation.indexes
+    - navigation.sections
     - navigation.instant
     - navigation.tabs
     - navigation.tabs.sticky
@@ -25,21 +30,70 @@ theme:
     - navigation.tracking
     - search.highlight
     - search.share
+    - search.suggest
+    - toc.follow
+  logo: ../assets/img/logo.png
+  favicon: ../assets/img/logo.png
   icon:
-    repo: fontawesome/brands/github
+    repo: fontawesome/brands/git-alt
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Switch to system preference
 
 # Extensions
 markdown_extensions:
+  - abbr
+  - attr_list
   - admonition
+  - footnotes
   - mkdocs-click
-  - markdown_include.include:
-      base_path: docs
+  - pymdownx.betterem
+  - pymdownx.caret
   - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      base_path: ["..", "source"]
+      check_paths: true
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - tables
+  - toc:
+      permalink: true
 
 # Plugins
 plugins:
   - search
+  - tags
+  - termynal
+  - section-index
+  - gen-files:
+      scripts:
+        - scripts/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -48,23 +102,44 @@ plugins:
           options:
             docstring_options:
               ignore_init_summary: true
-            docstring_style: sphinx
             docstring_section_style: list
+            docstring_style: google
             group_by_category: true
+            heading_level: 1
+            inherited_members: true
+            line_length: 88
             merge_init_into_class: true
+            separate_signature: true
+            show_bases: true
             show_category_heading: true
             show_root_heading: true
+            show_root_toc_entry: true
             show_signature_annotations: true
+            show_source: false
+            summary: true
+            unwrap_annotated: true
 
 # Page tree
 nav:
-  - Overview: index.md
-  - Users:
-      - Installation: users/installation.md
-      - Usage: users/usage.md
-  - Developers / Contributors:
-      - Contributing: developers/contributing.md
-      - API reference:
-          - developers/api_reference/index.md
-      - CLI reference: developers/cli_reference.md
+  - Home: index.md
+  - Usage:
+      - Installation: usage/installation.md
+      - Getting started: usage/getting-started.md
+      - CLI reference: usage/cli_reference.md
+      - API reference: usage/api_reference.md
+  - API Reference: reference/
+  - Development:
+      - Contributing: development/contributing.md
       - Source code: "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher"
+      - Issues: "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues"
+
+extra:
+  social:
+    - icon: fontawesome/brands/git-alt
+      link: https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher
+    - icon: fontawesome/brands/python
+      link: https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher
+    - icon: fontawesome/brands/dev
+      link: https://gitlab.si.c-s.fr/space_platforms/dunia/
+    - icon: fontawesome/solid/globe
+      link: https://www.csgroup.eu
