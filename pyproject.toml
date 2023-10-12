@@ -191,7 +191,10 @@ select = [
     "INP", "ISC", "N", "PIE", "PT", "PGH", "PTH", "PYI", "Q", "RET", "RSE", "S", "SIM",
     "SLF", "SLOT", "T20", "TCH", "TD", "TID", "YTT",
 ]
-ignore = ["ANN101", "ANN102", "D105", "D107", "D203", "D213", "D301", "E501", "G004", "RET504", "TD002", "TD003", "TRY400"]
+ignore = [
+    "ANN101", "ANN102", "D105", "D107", "D203", "D213", "D301", "D417", "E501", "G004",
+    "RET504", "TD002", "TD003", "TRY400",
+]
 fix = true
 unfixable = ["RUF005", "RUF100"]
 line-length = 88
@@ -218,7 +221,7 @@ ignore-variadic-names = true
 max-complexity = 10
 
 [tool.ruff.pycodestyle]
-max-doc-length = 100
+max-doc-length = 88
 
 [tool.ruff.pydocstyle]
-convention = "pep257"
+convention = "google"

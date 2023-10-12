@@ -17,4 +17,4 @@ The TAO Publisher is a tool developed to provide an easy publishing interface wi
   - [How to contribute?](./developers/contributing.md#how-to-contribute)
 - [API Reference](./developers/api_reference/index.md)
 - [CLI Reference](./developers/cli_reference.md)
-- [Source code](https://github.com/CGuichard/pypackage)
+- [Source code](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher)

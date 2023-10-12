@@ -17,13 +17,18 @@ _console = Console()
 def setup_logging(verbosity: int) -> None:
     """Define logging level.
 
-    :param verbosity: Accepted values:
+    Parameters:
+        verbosity:
 
-                    * 0: no logging except WARNING, ERROR and CRITICAL
-                    * 1: INFO level
-                    * 2: DEBUG level
-                    * 3: DEBUG level with time
-    :raises: :class:`ValueError`
+            Accepted values:
+
+            * `0`: no logging except WARNING, ERROR and CRITICAL
+            * `1`: INFO level
+            * `2`: DEBUG level
+            * `3`: DEBUG level with time
+
+    Raises:
+        ValueError: verbosity level is <0 or >3
     """
     if verbosity < VERBOSITY_MIN or verbosity > VERBOSITY_MAX:
         msg = f"Verbosity must be {VERBOSITY_MIN}-{VERBOSITY_MAX}, got {verbosity}"

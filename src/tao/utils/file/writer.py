@@ -48,8 +48,10 @@ def register_writer(*, extensions: List[str]) -> Callable[[WriterFunc], WriterFu
 def write_file(file_path: Path, /, data: FileContent) -> None:
     """Write data to file.
 
-    :raises: :class:`FileExistsError`
-    :raises: :class:`~tao.utils.file.exceptions.FileExtensionInvalidError`
+    Raises:
+        FileExistsError: file already exists at `file_path`.
+        tao.utils.file.exceptions.FileExtensionInvalidError:
+            file extension is not compatible.
     """
     if writer := get_writer(file_path.suffix):
         return writer(file_path, data)
@@ -69,8 +71,10 @@ def get_writer(file_ext: str, /) -> Optional[WriterFunc]:
 def write_yaml(file_path: Path, /, data: FileContent) -> None:
     """YAML document writer.
 
-    :raises: :class:`FileExistsError`
-    :raises: :class:`~tao.utils.file.exceptions.FileExtensionInvalidError`
+    Raises:
+        FileExistsError: file already exists at `file_path`.
+        tao.utils.file.exceptions.FileExtensionInvalidError:
+            file extension is not compatible.
     """
     with file_path.open("w") as file:
         yaml.dump(data, file, sort_keys=False)
@@ -80,8 +84,10 @@ def write_yaml(file_path: Path, /, data: FileContent) -> None:
 def write_json(file_path: Path, /, data: FileContent) -> None:
     """JSON document writer.
 
-    :raises: :class:`FileExistsError`
-    :raises: :class:`~tao.utils.file.exceptions.FileExtensionInvalidError`
+    Raises:
+        FileExistsError: file already exists at `file_path`.
+        tao.utils.file.exceptions.FileExtensionInvalidError:
+            file extension is not compatible.
     """
     with file_path.open("w") as file:
         json.dump(data, file, indent=2, sort_keys=False)

@@ -21,7 +21,8 @@ logger = get_logger()
 class APIClient:
     """TAO API Client.
 
-    :raises: :class:`~tao.exceptions.ConfigurationError`
+    Raises:
+        tao.exceptions.ConfigurationError: config url is not set.
     """
 
     def __init__(self, config: Optional[Config] = None) -> None:
@@ -37,7 +38,8 @@ class APIClient:
     def login(self, username: str, password: str) -> str:
         """Login user and retrieve auth token.
 
-        :raises: :class:`~tao.exceptions.RequestError`
+        Raises:
+            tao.exceptions.RequestError: request error.
         """
         try:
             response = self.request(
@@ -69,7 +71,8 @@ class APIClient:
     ) -> Dict[str, Any]:
         """Send request to TAO API.
 
-        :raises: :class:`~tao.exceptions.RequestError`
+        Raises:
+            tao.exceptions.RequestError: request error.
         """
         headers = {}
         if self.token:

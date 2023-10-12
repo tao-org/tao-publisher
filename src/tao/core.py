@@ -15,10 +15,14 @@ from tao.utils.http import slugify
 def read_container_file(file_path: Path) -> ContainerSpec:
     """Read container spec from file.
 
-    :raises: :class:`FileNotFoundError`
-    :raises: :class:`~tao.utils.file.exceptions.FileExtensionInvalidError`
-    :raises: :class:`~tao.utils.file.exceptions.FileContentError`
-    :raises: :class:`~tao.utils.file.exceptions.ContainerDefinitionError`
+    Raises:
+        FileNotFoundError: file_path do not point to an existing file.
+        tao.exceptions.ContainerDefinitionError:
+            file do not define a valid container.
+        tao.utils.file.exceptions.FileExtensionInvalidError:
+            file extension is not compatible.
+        tao.utils.file.exceptions.FileContentError:
+            file content could not be parsed.
     """
     try:
         return ContainerSpec(**parse_file(file_path))
@@ -29,8 +33,11 @@ def read_container_file(file_path: Path) -> ContainerSpec:
 def init_container_file(container_name: str, path: Path, file_format: str) -> Path:
     """Create container spec file.
 
-    :raises: :class:`FileExistsError`
-    :raises: :class:`~tao.utils.file.exceptions.FileExtensionInvalidError`
+    Raises:
+        FileExistsError:
+            file_path point to an existing container file, cannot overwrite.
+        tao.utils.file.exceptions.FileExtensionInvalidError:
+            file extension is not compatible.
     """
     file_format = file_format.lower()
     file_name = f"{slugify(container_name)}.{file_format}"

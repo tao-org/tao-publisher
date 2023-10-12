@@ -47,9 +47,12 @@ def register_parser(*, extensions: List[str]) -> Callable[[ParserFunc], ParserFu
 def parse_file(file_path: Path, /) -> FileContent:
     """Parse file.
 
-    :raises: :class:`FileNotFoundError`
-    :raises: :class:`~tao.utils.file.exceptions.FileExtensionInvalidError`
-    :raises: :class:`~tao.utils.file.exceptions.FileContentError`
+    Raises:
+        FileNotFoundError: file_path do not point to an existing file.
+        tao.utils.file.exceptions.FileExtensionInvalidError:
+            file extension is not compatible.
+        tao.utils.file.exceptions.FileContentError:
+            file content could not be parsed.
     """
     if parser := get_parser(file_path.suffix):
         return parser(file_path)
@@ -69,9 +72,12 @@ def get_parser(file_ext: str, /) -> Optional[ParserFunc]:
 def parse_yaml(file_path: Path, /) -> FileContent:
     """YAML document parser.
 
-    :raises: :class:`FileNotFoundError`
-    :raises: :class:`~tao.utils.file.exceptions.FileExtensionInvalidError`
-    :raises: :class:`~tao.utils.file.exceptions.FileContentError`
+    Raises:
+        FileNotFoundError: file_path do not point to an existing file.
+        tao.utils.file.exceptions.FileExtensionInvalidError:
+            file extension is not compatible.
+        tao.utils.file.exceptions.FileContentError:
+            file content could not be parsed.
     """
     try:
         with file_path.open() as file:
@@ -87,9 +93,12 @@ def parse_yaml(file_path: Path, /) -> FileContent:
 def parse_json(file_path: Path, /) -> FileContent:
     """JSON document parser.
 
-    :raises: :class:`FileNotFoundError`
-    :raises: :class:`~tao.utils.file.exceptions.FileExtensionInvalidError`
-    :raises: :class:`~tao.utils.file.exceptions.FileContentError`
+    Raises:
+        FileNotFoundError: file_path do not point to an existing file.
+        tao.utils.file.exceptions.FileExtensionInvalidError:
+            file extension is not compatible.
+        tao.utils.file.exceptions.FileContentError:
+            file content could not be parsed.
     """
     try:
         with file_path.open() as file:

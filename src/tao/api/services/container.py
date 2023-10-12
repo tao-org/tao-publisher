@@ -38,8 +38,11 @@ class ContainerAPI(ServiceAPI):
     ) -> List[Container]:
         """List containers registered in TAO.
 
-        :raises: :class:`~tao.exceptions.RequestError`
-        :raises: :class:`~tao.exceptions.SchemasDifferenceError`
+        Raises:
+            tao.exceptions.RequestError: request error.
+            tao.exceptions.SchemasDifferenceError:
+                local models differs from server response format,
+                schemas could have changed.
         """
         query_params = {
             "pageNumber": page_number,
@@ -66,8 +69,11 @@ class ContainerAPI(ServiceAPI):
     def get(self, container_id: str) -> Container:
         """Get container description.
 
-        :raises: :class:`~tao.exceptions.RequestError`
-        :raises: :class:`~tao.exceptions.SchemasDifferenceError`
+        Raises:
+            tao.exceptions.RequestError: request error.
+            tao.exceptions.SchemasDifferenceError:
+                local models differs from server response format,
+                schemas could have changed.
         """
         response = self.client.request("GET", self.url(f"/{container_id}"))
         data: Dict[str, Any] = response.get("data", {})
@@ -82,14 +88,16 @@ class ContainerAPI(ServiceAPI):
     def delete(self, container_id: str) -> None:
         """Delete container.
 
-        :raises: :class:`~tao.exceptions.RequestError`
+        Raises:
+            tao.exceptions.RequestError: request error.
         """
         self.client.request("DELETE", self.url(f"/{container_id}"))
 
     def register(self, container_spec: ContainerSpec, ctx_path: Path) -> None:
         """Register new container.
 
-        :raises: :class:`~tao.exceptions.RequestError`
+        Raises:
+            tao.exceptions.RequestError: request error.
         """
         data, files = self._prepare_container_register_request(
             container_spec,
