@@ -207,7 +207,7 @@ def container_register(ctx: click.Context, file_path: Path) -> None:
 
 
 @container.command(name="delete")
-@click.argument("container_id", nargs=-1)
+@click.argument("container_id", nargs=-1, required=True)
 @click.option("-y", "--yes", is_flag=True, help="Confirm container deletion.")
 @click.option("-i", "--ignore", is_flag=True, help="Ignore non-existing containers.")
 @click.pass_context
@@ -242,7 +242,7 @@ def container_delete(
 
 
 @container.command(name="get")
-@click.argument("container_id", nargs=-1)
+@click.argument("container_id", nargs=-1, required=True)
 @click.option("-j", "--json-format", is_flag=True, help="Print as JSON.")
 @click.option(
     "-c",
