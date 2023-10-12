@@ -1,4 +1,4 @@
-"""Services module."""
+"""Endpoints module."""
 
 from .container import ContainerAPI
 

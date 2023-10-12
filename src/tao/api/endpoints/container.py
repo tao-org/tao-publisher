@@ -13,15 +13,15 @@ from tao.logging import get_logger
 from tao.models.container import Container, ContainerSpec
 from tao.utils.http import SerializedFile, serialize_file, serialize_files
 
-from ._base import ServiceAPI
+from ._base import EndpointAPI
 
 logger = get_logger()
 
 
-class ContainerAPI(ServiceAPI):
+class ContainerAPI(EndpointAPI):
     """Container API client."""
 
-    __api__ = "/docker"
+    __endpoint__ = "/docker"
 
     class SortDirection(str, Enum):
         """Available sort options."""
