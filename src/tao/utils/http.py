@@ -12,7 +12,15 @@ SerializedFile = Tuple[str, bytes, str]
 
 
 def is_url(text: str, /) -> bool:
-    """Return True if text is a valid URL, False otherwise."""
+    """Return True if text is a valid URL, False otherwise.
+
+    >>> is_url("test")
+    False
+    >>> is_url("test://test")
+    False
+    >>> is_url("https://www.csgroup.eu")
+    True
+    """
     parse_result = urlparse(text)
     return parse_result.scheme in ["http", "https"] and all(
         (parse_result.scheme, parse_result.netloc),
@@ -20,7 +28,11 @@ def is_url(text: str, /) -> bool:
 
 
 def slugify(text: str, /) -> str:
-    """Slugify string, URL-friendly and filename-friendly."""
+    """Slugify string, URL-friendly and filename-friendly.
+
+    >>> slugify("Hello World!")
+    'hello-world'
+    """
     text = text.lower().strip()
     text = re.sub(r"[^\w\s-]", "", text)
     text = re.sub(r"[\s_-]+", "-", text)
