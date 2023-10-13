@@ -1,15 +1,20 @@
 """TAO component models/schemas."""
 
 from pathlib import Path
-from typing import Dict, List, Literal, Optional
+from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import AliasChoices, BaseModel, Field, field_validator
 from typing_extensions import TypedDict
 
 
 class _Dimension(TypedDict):
     width: float
     height: float
+
+
+class _Variable(TypedDict):
+    key: str
+    value: str
 
 
 class DataDescriptor(BaseModel):
@@ -45,12 +50,17 @@ class SourceDescriptor(BaseModel):
     id_: Optional[str] = Field(alias="id", default=None)
     parent_id: str = Field(alias="parentId")
     name: str
+    data_descriptor: DataDescriptor = Field(alias="dataDescriptor")
+    constraints: Optional[List[str]] = Field(default=None)
     cardinality: int = Field(
         default=-1,
         ge=-1,
         description="-1 = none, 0 = list, >0 = exact number of items",
     )
-    data_descriptor: DataDescriptor = Field(alias="dataDescriptor")
+    referenced_source_descriptor_id: Optional[str] = Field(
+        alias="referencedSourceDescriptorId",
+        default=None,
+    )
 
 
 class TargetDescriptor(BaseModel):
@@ -59,12 +69,17 @@ class TargetDescriptor(BaseModel):
     id_: Optional[str] = Field(alias="id", default=None)
     parent_id: str = Field(alias="parentId")
     name: str
+    data_descriptor: DataDescriptor = Field(alias="dataDescriptor")
+    constraints: Optional[List[str]] = Field(default=None)
     cardinality: int = Field(
         default=0,
         ge=0,
         description="0 = list, >0 = exact number of items, usually 1",
     )
-    data_descriptor: DataDescriptor = Field(alias="dataDescriptor")
+    referenced_target_descriptor_id: Optional[str] = Field(
+        alias="referencedTargetDescriptorId",
+        default=None,
+    )
 
 
 class ParameterDescriptor(BaseModel):
@@ -115,8 +130,8 @@ class ParameterDescriptor(BaseModel):
         return val
 
 
-class ComponentDescriptor(BaseModel):
-    """Component descriptor."""
+class Component(BaseModel):
+    """Component data as returned by list endpoint."""
 
     id_: str = Field(alias="id")
     label: str
@@ -124,24 +139,8 @@ class ComponentDescriptor(BaseModel):
     description: str = Field(default="")
     authors: str = Field(default="")
     copyright_: str = Field(alias="copyright", default="")
-    category: Literal["RASTER", "VECTOR", "OPTICAL", "RADAR", "MISC"] = Field(
-        default="RASTER",
-    )
     node_affinity: str = Field(alias="nodeAffinity", default="Any")
-    sources: List[SourceDescriptor] = Field(default_factory=list)
-    targets: List[TargetDescriptor] = Field(default_factory=list)
-    tags: Optional[List[str]] = Field(default=None)
-    container_id: str = Field(alias="containerId")
-    file_location: Path = Field(alias="fileLocation")
-    working_directory: Path = Field(alias="workingDirectory")
-    template_type: Literal["VELOCITY", "JAVASCRIPT", "XSLT", "JSON"] = Field(
-        alias="templateType",
-        default="VELOCITY",
-        description="for executables is VELOCITY",
-    )
-    variables: Optional[Dict[str, str]] = Field(default=None)
-    multi_thread: bool = Field(alias="multiThread", default=False)
-    parallelism: Optional[int] = Field(default=None, gt=0)
+    container_id: Optional[str] = Field(alias="containerId", default=None)
     visibility: Literal["SYSTEM", "USER", "CONTRIBUTOR"] = Field(default="USER")
     active: bool = Field(default=True)
     component_type: Literal[
@@ -151,14 +150,38 @@ class ComponentDescriptor(BaseModel):
         "EXTERNAL",
         "UTILITY",
     ] = Field(alias="componentType", default="EXECUTABLE")
+    category: Literal["RASTER", "VECTOR", "OPTICAL", "RADAR", "MISC"] = Field(
+        default="RASTER",
+    )
     output_managed: bool = Field(
-        alias="outputManaged",
+        validation_alias=AliasChoices("outputManaged", "managedOutput"),
+        serialization_alias="outputManaged",
         default=False,
         description=(
             "if true, the output (i.e., file name and location) is managed by TAO; "
             "if false, it is the executable that knows how to create it."
         ),
     )
+    tags: Optional[List[str]] = Field(default=None)
+
+
+class ComponentDescriptor(Component):
+    """Component descriptor for publish and component as returned by get endpoint."""
+
+    sources: List[SourceDescriptor] = Field(default_factory=list)
+    targets: List[TargetDescriptor] = Field(default_factory=list)
+    file_location: Path = Field(alias="fileLocation")
+    working_directory: Path = Field(alias="workingDirectory")
+    template_type: Literal["VELOCITY", "JAVASCRIPT", "XSLT", "JSON"] = Field(
+        alias="templateType",
+        default="VELOCITY",
+        description="for executables is VELOCITY",
+    )
+    variables: Optional[List[_Variable]] = Field(default=None)
+    multi_thread: bool = Field(alias="multiThread", default=False)
+    parallelism: Optional[int] = Field(default=None, gt=0)
+    owner: Optional[str] = Field(default=None)
+    transient: Optional[bool] = Field(default=None)
     parameter_descriptors: List[ParameterDescriptor] = Field(
         alias="parameterDescriptors",
     )
