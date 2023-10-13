@@ -4,14 +4,13 @@ from base64 import b64decode, b64encode
 from pathlib import Path
 from typing import Optional, TypedDict, cast
 
+import click
 import yaml
 
 from tao.logging import get_logger
 
-CONFIG_DIRNAME = ".tao"
 CONFIG_FILENAME = "config.yaml"
-DEFAULT_CONFIG_DIR = Path.home() / CONFIG_DIRNAME
-
+DEFAULT_CONFIG_DIR = Path(click.get_app_dir(__package__))
 
 logger = get_logger()
 
