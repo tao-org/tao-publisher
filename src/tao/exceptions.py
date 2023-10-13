@@ -15,11 +15,11 @@ class ConfigurationError(ValueError):
         super().__init__(f"{field} not configured correctly.")
 
 
-class ContainerDefinitionError(RuntimeError):
-    """Container definition validation error."""
+class PublishDefinitionError(RuntimeError):
+    """Publish definition validation error."""
 
     def __init__(self, validation_error: ValidationError) -> None:
-        msg = "Container definition is invalid, "
+        msg = "Publish definition is invalid, "
         msg += "please check the following validation errors:\n\n"
         msg += str(validation_error)
         super().__init__(msg)

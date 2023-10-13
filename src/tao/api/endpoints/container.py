@@ -1,17 +1,13 @@
 """Container-related API definitions."""
 
-import json
-import logging
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from pydantic import ValidationError
 
 from tao.exceptions import RequestResponseError, SchemasDifferenceError
 from tao.logging import get_logger
-from tao.models.container import Container, ContainerSpec
-from tao.utils.http import SerializedFile, serialize_file, serialize_files
+from tao.models.container import Container
 
 from ._base import EndpointAPI
 
@@ -92,61 +88,3 @@ class ContainerAPI(EndpointAPI):
             tao.exceptions.RequestError: request error.
         """
         self.client.request("DELETE", self.url(f"/{container_id}"))
-
-    def register(self, container_spec: ContainerSpec, ctx_path: Path) -> None:
-        """Register new container.
-
-        Raises:
-            tao.exceptions.RequestError: request error.
-        """
-        data, files = self._prepare_container_register_request(
-            container_spec,
-            ctx_path=ctx_path,
-        )
-        logger.debug(f"Container register request\n{data=}\n{files=}")
-
-        response = self.client.request(
-            "POST",
-            self.url("/register"),
-            data=data,
-            files=files,
-        )
-        message = response.get("message", response)
-        logger.log(logging.DEBUG if message == response else logging.INFO, message)
-
-    def _prepare_container_register_request(
-        self,
-        container_spec: ContainerSpec,
-        ctx_path: Path,
-    ) -> Tuple[Dict[str, Any], List[Tuple[str, SerializedFile]]]:
-        data = container_spec.model_dump(
-            mode="json",
-            by_alias=True,
-            exclude={"container_logo", "docker_files", "auxiliary_files"},
-        )
-        data["containerDescriptor"] = json.dumps(data.pop("container"))
-        data["componentDescriptors"] = json.dumps(data.pop("components"))
-
-        files: List[Tuple[str, SerializedFile]] = []
-
-        if container_spec.container_logo:
-            logo = serialize_file(
-                container_spec.container_logo,
-                ctx_path=ctx_path,
-            )
-            if logo:
-                files.append(("containerLogo", logo))
-
-        docker_files = serialize_files(
-            container_spec.docker_files,
-            ctx_path=ctx_path,
-        )
-        files.extend(("dockerFiles", f) for f in docker_files)
-
-        auxiliary_files = serialize_files(
-            container_spec.auxiliary_files,
-            ctx_path=ctx_path,
-        )
-        files.extend(("auxiliaryFiles", f) for f in auxiliary_files)
-
-        return data, files

@@ -5,8 +5,6 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-from .component import ComponentDescriptor
-
 
 class Application(BaseModel):
     """TAO Application model."""
@@ -43,19 +41,3 @@ class Container(ContainerDescriptor):
     type_: str = Field(alias="type")
     logo: Optional[str] = Field(default=None)
     owner_id: Optional[str] = Field(alias="ownerId", default=None)
-
-
-class ContainerSpec(BaseModel):
-    """Container specification."""
-
-    name: str = Field(default="")
-    description: str = Field(default="")
-    system: bool = Field(default=True)
-    container_logo: Optional[Path] = Field(alias="containerLogo", default=None)
-    container: ContainerDescriptor
-    components: List[ComponentDescriptor] = Field(default_factory=list)
-    docker_files: List[Path] = Field(alias="dockerFiles", default_factory=list)
-    auxiliary_files: List[Path] = Field(
-        alias="auxiliaryFiles",
-        default_factory=list,
-    )

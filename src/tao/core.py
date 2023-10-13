@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from tao.exceptions import ContainerDefinitionError
+from tao.exceptions import PublishDefinitionError
 from tao.models.component import (
     ComponentDescriptor,
     DataDescriptor,
@@ -13,60 +13,61 @@ from tao.models.component import (
     SourceDescriptor,
     TargetDescriptor,
 )
-from tao.models.container import Application, ContainerDescriptor, ContainerSpec
+from tao.models.container import Application, ContainerDescriptor
+from tao.models.publish import PublishSpec
 from tao.utils.file import parse_file, write_file
 from tao.utils.http import slugify
 
 
-def read_container_file(file_path: Path) -> ContainerSpec:
-    """Read container spec from file.
+def read_publish_file(file_path: Path) -> PublishSpec:
+    """Read publish spec from file.
 
     Raises:
         FileNotFoundError: file_path do not point to an existing file.
-        tao.exceptions.ContainerDefinitionError:
-            file do not define a valid container.
+        tao.exceptions.PublishDefinitionError:
+            file do not define a valid publication request.
         tao.utils.file.exceptions.FileExtensionInvalidError:
             file extension is not compatible.
         tao.utils.file.exceptions.FileContentError:
             file content could not be parsed.
     """
     try:
-        return ContainerSpec(**parse_file(file_path))
+        return PublishSpec(**parse_file(file_path))
     except ValidationError as err:
-        raise ContainerDefinitionError(err) from err
+        raise PublishDefinitionError(err) from err
 
 
-def init_container_file(container_name: str, path: Path, file_format: str) -> Path:
-    """Create container spec file.
+def init_publish_file(name: str, path: Path, file_format: str) -> Path:
+    """Create publish spec file.
 
     Raises:
         FileExistsError:
-            file_path point to an existing container file, cannot overwrite.
+            file_path point to an existing publish file, cannot overwrite.
         tao.utils.file.exceptions.FileExtensionInvalidError:
             file extension is not compatible.
     """
     file_format = file_format.lower()
-    file_name = f"{slugify(container_name)}.{file_format}"
+    file_name = f"{slugify(name)}.{file_format}"
     file_path = path / file_name
 
-    container_spec = _create_example_container_spec(container_name)
-    container_spec_data = container_spec.model_dump(mode="json", by_alias=True)
-    write_file(file_path, container_spec_data)
+    publish_spec = _create_example_publish_spec(name)
+    publish_spec_data = publish_spec.model_dump(mode="json", by_alias=True)
+    write_file(file_path, publish_spec_data)
 
     return file_path
 
 
-def _create_example_container_spec(container_name: str) -> ContainerSpec:
+def _create_example_publish_spec(name: str) -> PublishSpec:
     container_id = str(uuid.uuid4())
     example_app = Path("example.py")
     example_app_id = "example-app"
-    return ContainerSpec(
-        name=container_name,
+    return PublishSpec(
+        name=name,
         description="Description of your Toolbox container",
         containerLogo=Path("logo.png"),
         container=ContainerDescriptor(
             id=container_id,
-            name=container_name,
+            name=name,
             description="Description of your docker container",
             applications=[
                 Application(

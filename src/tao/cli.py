@@ -8,12 +8,12 @@ from typing import List, Optional, Tuple
 import click
 from rich import prompt, traceback
 
-from tao.api import APIClient, ContainerAPI
+from tao.api import APIClient, ContainerAPI, PublishAPI
 from tao.config import Config
-from tao.core import init_container_file, read_container_file
+from tao.core import init_publish_file, read_publish_file
 from tao.exceptions import (
     ConfigurationError,
-    ContainerDefinitionError,
+    PublishDefinitionError,
     RequestError,
     SchemasDifferenceError,
 )
@@ -120,22 +120,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
     config.write()
 
 
-@main.group
-@click.pass_context
-def container(ctx: click.Context) -> None:
-    """Manage containers."""
-    try:
-        config: Config = ctx.obj[CONTEXT_CONFIG]
-        client = APIClient(config=config)
-        api = ContainerAPI(client=client)
-        ctx.obj[CONTEXT_CLIENT] = client
-        ctx.obj[CONTEXT_API] = api
-    except ConfigurationError as err:
-        logger.error(err)
-        sys.exit(1)
-
-
-@container.command(name="init")
+@main.command
 @click.argument("name")
 @click.argument(
     "path",
@@ -147,61 +132,82 @@ def container(ctx: click.Context) -> None:
     is_flag=True,
     help="Write file in JSON instead of YAML.",
 )
-def container_init(name: str, path: Path, json_file: bool) -> None:
-    """Create container definition file."""
+def init(name: str, path: Path, json_file: bool) -> None:
+    """Create publish definition file."""
     file_format = "json" if json_file else "yaml"
     try:
-        file_path = init_container_file(
-            container_name=name,
+        file_path = init_publish_file(
+            name=name,
             path=path,
             file_format=file_format,
         )
-        logger.info(f"Container definition file created: {file_path}")
+        logger.info(f"Publish definition file created: {file_path}")
     except FileExistsError as err:
         logger.error(err)
         sys.exit(1)
 
 
-@container.command("read")
+@main.command
 @click.argument(
     "file_path",
     type=click.Path(exists=True, dir_okay=False, resolve_path=True, path_type=Path),
 )
-def container_read(file_path: Path) -> None:
-    """Read container definition file."""
+def read(file_path: Path) -> None:
+    """Read and validate publish definition file."""
     try:
-        container_spec = read_container_file(file_path)
-        console.print(container_spec)
+        publish_spec = read_publish_file(file_path)
+        console.print(publish_spec)
     except (
         FileExtensionInvalidError,
         FileContentError,
-        ContainerDefinitionError,
+        PublishDefinitionError,
     ) as err:
         logger.error(err)
         sys.exit(1)
 
 
-@container.command("register")
+@main.command
 @click.argument(
     "file_path",
     type=click.Path(exists=True, dir_okay=False, resolve_path=True, path_type=Path),
 )
 @click.pass_context
-def container_register(ctx: click.Context, file_path: Path) -> None:
-    """Register container."""
+def publish(ctx: click.Context, file_path: Path) -> None:
+    """Publish container and components defined in a publish definition file."""
     config: Config = ctx.obj[CONTEXT_CONFIG]
-    api: ContainerAPI = ctx.obj[CONTEXT_API]
     try:
-        container_spec = read_container_file(file_path)
-        logger.debug("Container definition read")
-        api.register(container_spec, ctx_path=file_path.parent)
+        client = APIClient(config=config)
+        api = PublishAPI(client=client)
+    except ConfigurationError as err:
+        logger.error(err)
+        sys.exit(1)
+
+    try:
+        publish_spec = read_publish_file(file_path)
+        logger.debug("Publish definition file read")
+        api.push(publish_spec, ctx_path=file_path.parent)
         logger.info(f"Please check your notifications at: {config.url}")
     except (
         FileExtensionInvalidError,
         FileContentError,
         RequestError,
-        ContainerDefinitionError,
+        PublishDefinitionError,
     ) as err:
+        logger.error(err)
+        sys.exit(1)
+
+
+@main.group
+@click.pass_context
+def container(ctx: click.Context) -> None:
+    """Manage containers."""
+    try:
+        config: Config = ctx.obj[CONTEXT_CONFIG]
+        client = APIClient(config=config)
+        api = ContainerAPI(client=client)
+        ctx.obj[CONTEXT_CLIENT] = client
+        ctx.obj[CONTEXT_API] = api
+    except ConfigurationError as err:
         logger.error(err)
         sys.exit(1)
 

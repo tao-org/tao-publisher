@@ -2,7 +2,7 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
-from tao.api import APIClient, ContainerAPI
+from tao.api import APIClient, PublishAPI
 from tao.config import Config
 
 try:
@@ -12,4 +12,4 @@ except PackageNotFoundError:  # pragma: no cover
     __version__ = "undefined"
 
 
-__all__ = ["Config", "APIClient", "ContainerAPI"]
+__all__ = ["Config", "APIClient", "PublishAPI"]

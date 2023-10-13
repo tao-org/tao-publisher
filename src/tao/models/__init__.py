@@ -1,5 +1,6 @@
 """Models module."""
 
-from .container import Container, ContainerSpec
+from .container import Container
+from .publish import PublishSpec
 
-__all__ = ["Container", "ContainerSpec"]
+__all__ = ["Container", "PublishSpec"]
