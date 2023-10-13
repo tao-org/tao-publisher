@@ -15,7 +15,11 @@ logger = get_logger()
 
 
 class ContainerAPI(EndpointAPI):
-    """Container API client."""
+    """Container API client.
+
+    Raises:
+        tao.exceptions.ConfigurationError: client's config url is not set.
+    """
 
     __endpoint__ = "/docker"
 

@@ -15,7 +15,11 @@ logger = get_logger()
 
 
 class PublishAPI(EndpointAPI):
-    """Publish API client."""
+    """Publish API client.
+
+    Raises:
+        tao.exceptions.ConfigurationError: client's config url is not set.
+    """
 
     __endpoint__ = "/docker/register"
 
