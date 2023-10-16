@@ -3,12 +3,13 @@
 import sys
 from importlib.metadata import metadata
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 import click
+from pydantic import BaseModel
 from rich import prompt, traceback
 
-from tao.api import APIClient, ContainerAPI, PublishAPI
+from tao.api import APIClient, ComponentAPI, ContainerAPI, PublishAPI
 from tao.config import Config
 from tao.core import init_publish_file, read_publish_file
 from tao.exceptions import (
@@ -18,7 +19,6 @@ from tao.exceptions import (
     SchemasDifferenceError,
 )
 from tao.logging import get_console, get_logger, setup_logging
-from tao.models import Container
 from tao.utils.file.exceptions import FileContentError, FileExtensionInvalidError
 from tao.utils.http import is_url
 
@@ -309,10 +309,16 @@ def container_get(
         logger.error(err)
         sys.exit(1)
 
-    _display_containers(
+    exclude_set = set()
+    if not applications:
+        exclude_set.add("applications")
+    if not logo:
+        exclude_set.add("logo")
+    _display_models(
         containers,
-        applications,
-        logo,
+        label_prop="name",
+        exclude_set=exclude_set,
+        children=["applications"],
         json_format=json_format,
         clean=clean,
     )
@@ -394,29 +400,201 @@ def container_list(
         logger.error(err)
         sys.exit(1)
 
-    _display_containers(
-        containers,
-        applications,
-        logo,
-        json_format=json_format,
-        clean=clean,
-    )
-
-
-def _display_containers(
-    containers: List[Container],
-    applications: bool = False,
-    logo: bool = False,
-    json_format: bool = False,
-    clean: bool = False,
-) -> None:
     exclude_set = set()
     if not applications:
         exclude_set.add("applications")
     if not logo:
         exclude_set.add("logo")
+    _display_models(
+        containers,
+        label_prop="name",
+        exclude_set=exclude_set,
+        children=["applications"],
+        json_format=json_format,
+        clean=clean,
+    )
 
-    serialized_containers = [
+
+@main.group
+@click.pass_context
+def component(ctx: click.Context) -> None:
+    """Manage components."""
+    try:
+        config: Config = ctx.obj[CONTEXT_CONFIG]
+        client = APIClient(config=config)
+        api = ComponentAPI(client=client)
+        ctx.obj[CONTEXT_CLIENT] = client
+        ctx.obj[CONTEXT_API] = api
+    except ConfigurationError as err:
+        logger.error(err)
+        sys.exit(1)
+
+
+@component.command(name="delete")
+@click.argument("component_id", nargs=-1, required=True)
+@click.option("-y", "--yes", is_flag=True, help="Confirm component deletion.")
+@click.option("-i", "--ignore", is_flag=True, help="Ignore non-existing components.")
+@click.pass_context
+def component_delete(
+    ctx: click.Context,
+    component_id: Tuple[str, ...],
+    yes: bool,
+    ignore: bool,
+) -> None:
+    """Delete component."""
+    api: ComponentAPI = ctx.obj[CONTEXT_API]
+    for _id in component_id:
+        try:
+            component = api.get(_id)
+            logger.debug(f"{component=}")
+
+            confirm = (
+                True if yes else prompt.Confirm.ask(f"Delete '{component.label}'?")
+            )
+            if confirm:
+                api.delete(_id)
+                logger.info(f"Component deleted: '{component.label}'")
+            else:
+                logger.info(f"Component '{component.label}' was not deleted")
+
+        except SchemasDifferenceError as err:  ## noqa: PERF203
+            logger.critical(err)
+            sys.exit(1)
+        except RequestError as err:
+            if not ignore:
+                logger.error(err)
+                sys.exit(1)
+            logger.debug(err)
+
+
+@component.command(name="get")
+@click.argument("component_id", nargs=-1, required=True)
+@click.option("-j", "--json-format", is_flag=True, help="Print as JSON.")
+@click.option(
+    "-c",
+    "--clean",
+    is_flag=True,
+    help="Don't output default values, as well as null.",
+)
+@click.pass_context
+def component_get(
+    ctx: click.Context,
+    component_id: Tuple[str, ...],
+    json_format: bool,
+    clean: bool,
+) -> None:
+    """Get component."""
+    api: ComponentAPI = ctx.obj[CONTEXT_API]
+    try:
+        components = [api.get(_id) for _id in component_id]
+    except SchemasDifferenceError as err:
+        logger.critical(err)
+        sys.exit(1)
+    except RequestError as err:
+        logger.error(err)
+        sys.exit(1)
+
+    _display_models(
+        components,
+        label_prop="label",
+        exclude_set=set(),
+        children=[
+            "sources",
+            "targets",
+            "dataDescriptor",
+            "parameterDescriptors",
+        ],
+        json_format=json_format,
+        clean=clean,
+    )
+
+
+@component.command(name="list")
+@click.option(
+    "-s",
+    "--sort",
+    type=click.Choice(
+        [el.value for el in ComponentAPI.SortDirection],
+        case_sensitive=False,
+    ),
+    default=None,
+    help="Sort direction.",
+)
+@click.option(
+    "-f",
+    "--sort-field",
+    default=None,
+    help="Sort by component field value.",
+)
+@click.option(
+    "-p",
+    "--page",
+    type=int,
+    default=None,
+    help="Page number.",
+)
+@click.option(
+    "--page-size",
+    type=int,
+    default=10,
+    show_default=True,
+    help="Page size.",
+)
+@click.option("-j", "--json-format", is_flag=True, help="Print as JSON.")
+@click.option(
+    "-c",
+    "--clean",
+    is_flag=True,
+    help="Don't output default values, as well as null.",
+)
+@click.pass_context
+def component_list(
+    ctx: click.Context,
+    sort: Optional[str],
+    sort_field: Optional[str],
+    page: Optional[int],
+    page_size: int,
+    json_format: bool,
+    clean: bool,
+) -> None:
+    """List component."""
+    api: ComponentAPI = ctx.obj[CONTEXT_API]
+
+    try:
+        sort_direction = ComponentAPI.SortDirection[sort] if sort else None
+        components = api.list(
+            page_number=page,
+            page_size=page_size if page else None,
+            sort_by_field=sort_field,
+            sort_direction=sort_direction,
+        )
+        logger.debug(f"Components count: {len(components)}")
+    except SchemasDifferenceError as err:
+        logger.critical(err)
+        sys.exit(1)
+    except RequestError as err:
+        logger.error(err)
+        sys.exit(1)
+
+    _display_models(
+        components,
+        label_prop="label",
+        exclude_set=set(),
+        children=[],
+        json_format=json_format,
+        clean=clean,
+    )
+
+
+def _display_models(
+    models: Sequence[BaseModel],
+    label_prop: str,
+    exclude_set: Set[str],
+    children: List[str],
+    json_format: bool = False,
+    clean: bool = False,
+) -> None:
+    serialized_models = [
         c.model_dump(
             mode="json",
             by_alias=True,
@@ -425,25 +603,23 @@ def _display_containers(
             exclude_none=clean,
             exclude_unset=clean,
         )
-        for c in containers
+        for c in models
     ]
     if json_format:
         json_data = (
-            serialized_containers[0]
-            if len(serialized_containers) == 1
-            else serialized_containers
+            serialized_models[0] if len(serialized_models) == 1 else serialized_models
         )
         console.print_json(data=json_data)
     else:
-        for i, container in enumerate(serialized_containers):
-            container_id = container.pop("id")
-            container_name = container.pop("name")
+        for i, model in enumerate(serialized_models):
+            model_label = model.pop(label_prop)
+            model_id = model.pop("id")
             console.print(
-                f"[blue]{container_name}[/blue]([purple]{container_id}[/purple])",
+                f"[blue]{model_label}[/blue]([purple]{model_id}[/purple])",
                 highlight=False,
             )
-            _display(container, children=["applications"])
-            if i < len(serialized_containers) - 1:
+            _display(model, children=children)
+            if i < len(serialized_models) - 1:
                 console.print()
 
 
