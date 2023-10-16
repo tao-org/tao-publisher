@@ -3,7 +3,7 @@
 import sys
 from importlib.metadata import metadata
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import click
 from rich import prompt, traceback
@@ -418,6 +418,7 @@ def _display_containers(
 
     serialized_containers = [
         c.model_dump(
+            mode="json",
             by_alias=True,
             exclude=exclude_set,
             exclude_defaults=clean,
@@ -441,13 +442,51 @@ def _display_containers(
                 f"[blue]{container_name}[/blue]([purple]{container_id}[/purple])",
                 highlight=False,
             )
-            for field, value in container.items():
-                console.print(
-                    f"  [b]{field}[/b]: {value}",
-                    highlight=not isinstance(value, str),
-                )
+            _display(container, children=["applications"])
             if i < len(serialized_containers) - 1:
                 console.print()
+
+
+def _display(
+    data: Union[List[Dict[str, Any]], Dict[str, Any]],
+    *,
+    children: Optional[List[str]] = None,
+    title: Optional[str] = None,
+    indent_level: int = 1,
+) -> None:
+    if not children:
+        children = []
+
+    indent_char = "    "
+    indent = indent_char * (indent_level)
+    indent_title = indent_char * (indent_level - 1)
+
+    if title:
+        console.print(
+            f"{indent_title}[b]{title}[/b]:",
+            highlight=not isinstance(title, str),
+        )
+
+    if isinstance(data, list):
+        for i, e in enumerate(data):
+            console.print(f"{indent}[b]---------[/b]")
+            _display(e, children=children, indent_level=indent_level)
+            if i == len(data) - 1:
+                console.print(f"{indent}[b]---------[/b]")
+    else:
+        for field, value in data.items():
+            if field in children:
+                _display(
+                    value,
+                    children=children,
+                    title=field,
+                    indent_level=indent_level + 1,
+                )
+            else:
+                console.print(
+                    f"{indent}[b]{field}[/b]: {value}",
+                    highlight=not isinstance(value, str),
+                )
 
 
 if __name__ == "__main__":
