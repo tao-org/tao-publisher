@@ -37,6 +37,10 @@ class APIClient:
         self.user = config.user
         self.token = config.token
 
+    def is_authenticated(self) -> bool:
+        """Returns True if API token is set, False otherwise."""
+        return self.token is not None
+
     def login(self, password: str, username: Optional[str] = None) -> str:
         """Login user and retrieve auth token.
 
@@ -57,8 +61,8 @@ class APIClient:
 
         data = response.get("data")
         if isinstance(data, dict) and "authToken" in data:
-            self.token = data["authToken"]
-            return cast(str, self.token)
+            self.token = cast(str, data["authToken"])
+            return self.token
 
         logger.debug(f"Login data: {data}")
         msg = 'Login response missing "authToken".'

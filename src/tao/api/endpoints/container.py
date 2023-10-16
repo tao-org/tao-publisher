@@ -14,14 +14,14 @@ from ._base import EndpointAPI
 logger = get_logger()
 
 
-class ContainerAPI(EndpointAPI):
+class ContainerAPI(EndpointAPI, endpoint="/docker", auth=True):
     """Container API client.
 
     Raises:
-        tao.exceptions.ConfigurationError: client's config url is not set.
+        tao.exceptions.ConfigurationError:
+            - client's config url is not set.
+            - auth required but client's token is not set.
     """
-
-    __endpoint__ = "/docker"
 
     class SortDirection(str, Enum):
         """Available sort options."""

@@ -14,14 +14,14 @@ from ._base import EndpointAPI
 logger = get_logger()
 
 
-class PublishAPI(EndpointAPI):
+class PublishAPI(EndpointAPI, endpoint="/docker/register", auth=True):
     """Publish API client.
 
     Raises:
-        tao.exceptions.ConfigurationError: client's config url is not set.
+        tao.exceptions.ConfigurationError:
+            - client's config url is not set.
+            - auth required but client's token is not set.
     """
-
-    __endpoint__ = "/docker/register"
 
     def push(self, publish_spec: PublishSpec, ctx_path: Path) -> None:
         """Push new container and components.
