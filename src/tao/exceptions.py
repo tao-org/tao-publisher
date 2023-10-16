@@ -11,9 +11,6 @@ from tao.utils.http import HTTP_401_UNAUTHORIZED
 class ConfigurationError(ValueError):
     """Configuration error."""
 
-    def __init__(self, field: str) -> None:
-        super().__init__(f"{field} not configured correctly.")
-
 
 class PublishDefinitionError(RuntimeError):
     """Publish definition validation error."""

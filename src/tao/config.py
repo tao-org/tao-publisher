@@ -7,10 +7,12 @@ from typing import Optional, TypedDict, cast
 import click
 import yaml
 
+from tao.exceptions import ConfigurationError
 from tao.logging import get_logger
 
-CONFIG_FILENAME = "config.yaml"
-DEFAULT_CONFIG_DIR = Path(click.get_app_dir(__package__))
+_CONFIG_FILENAME = "config.yaml"
+_DEFAULT_CONFIG_DIR = Path(click.get_app_dir(__package__))
+_DEFAULT_CONFIG_FILE_PATH = _DEFAULT_CONFIG_DIR / _CONFIG_FILENAME
 
 logger = get_logger()
 
@@ -21,37 +23,48 @@ class _ConfigDict(TypedDict):
 
 
 class Config:
-    """Class containing the project configuration."""
+    """Class containing the project configuration.
 
-    def __init__(
-        self,
-        config_dir: Path = DEFAULT_CONFIG_DIR,
-    ) -> None:
-        self.config_dir = config_dir
-        self.config_file = self.config_dir / CONFIG_FILENAME
+    Raises:
+        tao.exceptions.ConfigurationError: config file content is invalid.
+    """
 
-        conf = self._read()
-        conf.setdefault("url", None)
-        conf.setdefault("token", None)
-        self._conf = conf
+    def __init__(self, file_path: Optional[Path] = None) -> None:
+        self._file_path = file_path if file_path else _DEFAULT_CONFIG_FILE_PATH
+        self._conf = _ConfigDict(url=None, token=None)
+        self.load()
 
-    def _read(self) -> _ConfigDict:
-        if not self.config_dir.is_dir():
-            logger.debug(f"Create dir: {self.config_dir}")
-            self.config_dir.mkdir(parents=True, exist_ok=True)
+    def load(self) -> None:
+        """Load config file.
 
-        if not self.config_file.is_file():
-            logger.debug(f"Config file not found at: {self.config_file}")
-            return _ConfigDict(url=None, token=None)
+        Raises:
+            tao.exceptions.ConfigurationError: config file content is invalid.
+        """
+        if self._file_path.is_file():
+            logger.debug(f"Load config from: {self._file_path}")
+            try:
+                with self._file_path.open() as file:
+                    content = cast(_ConfigDict, yaml.safe_load(file))
+                    self._conf.update(content)
+            except (TypeError, ValueError, yaml.YAMLError) as err:
+                msg = f"Config content error:\n\n{err}"
+                raise ConfigurationError(msg) from err
 
-        logger.debug(f"Read config from: {self.config_file}")
-        with self.config_file.open() as file:
-            return cast(_ConfigDict, yaml.safe_load(file))
+            # Ensure keys are at least defined
+            self._conf.setdefault("url", None)
+            self._conf.setdefault("token", None)
+        else:
+            logger.debug(f"Config file not found at: {self._file_path}")
 
     def write(self) -> None:
         """Write config file."""
-        logger.debug(f"Write config to file: {self.config_file}")
-        with self.config_file.open("w") as file:
+        _config_dir = self._file_path.parent
+        if not _config_dir.is_dir():
+            logger.debug(f"Create config dir: {_config_dir}")
+            _config_dir.mkdir(parents=True, exist_ok=True)
+
+        logger.debug(f"Write config to file: {self._file_path}")
+        with self._file_path.open("w") as file:
             yaml.dump(self._conf, file, default_flow_style=False)
 
     @property

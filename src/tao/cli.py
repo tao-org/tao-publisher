@@ -33,6 +33,13 @@ CONTEXT_API = "api"
 
 @click.group
 @click.option(
+    "-c",
+    "--config",
+    "config_path",
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True, path_type=Path),
+    help="Config file path",
+)
+@click.option(
     "-v",
     "--verbose",
     count=True,
@@ -45,15 +52,23 @@ CONTEXT_API = "api"
     help="Minimal output.",
 )
 @click.pass_context
-def main(ctx: click.Context, verbose: int, quiet: bool) -> None:
+def main(
+    ctx: click.Context,
+    config_path: Optional[Path],
+    verbose: int,
+    quiet: bool,
+) -> None:
     """TAO Publisher CLI."""
     _verbosity = 0 if quiet else verbose + 1
     traceback.install(show_locals=True, suppress=[click])
     setup_logging(verbosity=_verbosity)
     ctx.ensure_object(dict)
 
-    logger.debug("Load config")
-    ctx.obj[CONTEXT_CONFIG] = Config()
+    try:
+        ctx.obj[CONTEXT_CONFIG] = Config(config_path)
+    except ConfigurationError as err:
+        logger.error(err)
+        sys.exit(1)
 
 
 @main.command()

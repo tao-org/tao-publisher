@@ -30,7 +30,8 @@ class APIClient:
             config = Config()
 
         if not config.url:
-            raise ConfigurationError(field="URL")
+            msg = "URL not configured correctly."
+            raise ConfigurationError(msg)
 
         self.token = config.token
         self.api_url = config.url.rstrip("/")
