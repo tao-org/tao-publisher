@@ -530,7 +530,7 @@ def component_list(
         components = api.list(
             page_number=page,
             page_size=page_size if page else None,
-            sort_by_field=sort_field,
+            sort_by=sort_field,
             sort_direction=sort_direction,
         )
         logger.debug(f"Components count: {len(components)}")

@@ -47,7 +47,7 @@ class ContainerAPI(EndpointAPI, endpoint="/docker", auth=True):
         query_params = {
             "pageNumber": page_number,
             "pageSize": page_size,
-            "sortByField": sort_by_field,
+            "sortByField": sort_by_field if sort_by_field else "id",
             "sortDirection": sort_direction.value if sort_direction else None,
         }
         params = {k: str(v) for k, v in query_params.items() if v}

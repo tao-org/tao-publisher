@@ -33,7 +33,7 @@ class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):
         self,
         page_number: Optional[int] = None,
         page_size: Optional[int] = None,
-        sort_by_field: Optional[str] = None,
+        sort_by: Optional[str] = None,
         sort_direction: Optional[SortDirection] = None,
     ) -> List[Component]:
         """List components registered in TAO.
@@ -47,7 +47,7 @@ class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):
         query_params = {
             "pageNumber": page_number,
             "pageSize": page_size,
-            "sortByField": sort_by_field,
+            "sortBy": sort_by if sort_by else "id",
             "sortDirection": sort_direction.value if sort_direction else None,
         }
         params = {k: str(v) for k, v in query_params.items() if v}
