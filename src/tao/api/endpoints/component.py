@@ -75,7 +75,11 @@ class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):
                 local models differs from server response format,
                 schemas could have changed.
         """
-        response = self.client.request("GET", self.url(f"/{component_id}"))
+        response = self.client.request(
+            "GET",
+            self.url(f"/{component_id}"),
+            params={"id": component_id},  # TODO: remove id param when API is fixed
+        )
         data: Dict[str, Any] = response.get("data", {})
         try:
             return ComponentDescriptor(**data)
