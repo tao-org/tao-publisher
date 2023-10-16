@@ -283,12 +283,6 @@ def container_delete(
     is_flag=True,
     help="Don't output default values, as well as null.",
 )
-@click.option(
-    "-a",
-    "--applications",
-    is_flag=True,
-    help="Display containers applications.",
-)
 @click.option("-l", "--logo", is_flag=True, help="Display containers logos in base64.")
 @click.pass_context
 def container_get(
@@ -296,7 +290,6 @@ def container_get(
     container_id: Tuple[str, ...],
     json_format: bool,
     clean: bool,
-    applications: bool,
     logo: bool,
 ) -> None:
     """Get container."""
@@ -312,7 +305,7 @@ def container_get(
 
     _display_containers(
         containers,
-        applications=applications,
+        applications=True,
         logo=logo,
         json_format=json_format,
         clean=clean,
@@ -357,13 +350,6 @@ def container_get(
     is_flag=True,
     help="Don't output default values, as well as null.",
 )
-@click.option(
-    "-a",
-    "--applications",
-    is_flag=True,
-    help="Display containers applications.",
-)
-@click.option("-l", "--logo", is_flag=True, help="Display containers logos in base64.")
 @click.pass_context
 def container_list(
     ctx: click.Context,
@@ -373,8 +359,6 @@ def container_list(
     page_size: int,
     json_format: bool,
     clean: bool,
-    applications: bool,
-    logo: bool,
 ) -> None:
     """List containers."""
     api: ContainerAPI = ctx.obj[CONTEXT_API]
@@ -397,8 +381,8 @@ def container_list(
 
     _display_containers(
         containers,
-        applications=applications,
-        logo=logo,
+        applications=False,
+        logo=False,
         json_format=json_format,
         clean=clean,
     )
