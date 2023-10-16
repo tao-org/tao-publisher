@@ -19,6 +19,7 @@ logger = get_logger()
 
 class _ConfigDict(TypedDict):
     url: Optional[str]
+    user: Optional[str]
     token: Optional[str]
 
 
@@ -31,7 +32,7 @@ class Config:
 
     def __init__(self, file_path: Optional[Path] = None) -> None:
         self._file_path = file_path if file_path else _DEFAULT_CONFIG_FILE_PATH
-        self._conf = _ConfigDict(url=None, token=None)
+        self._conf = _ConfigDict(url=None, user=None, token=None)
         self.load()
 
     def load(self) -> None:
@@ -52,6 +53,7 @@ class Config:
 
             # Ensure keys are at least defined
             self._conf.setdefault("url", None)
+            self._conf.setdefault("user", None)
             self._conf.setdefault("token", None)
         else:
             logger.debug(f"Config file not found at: {self._file_path}")
@@ -76,6 +78,16 @@ class Config:
     def url(self, val: Optional[str]) -> None:
         """Set config url."""
         self._conf["url"] = val
+
+    @property
+    def user(self) -> Optional[str]:
+        """User."""
+        return self._conf["user"]
+
+    @user.setter
+    def user(self, val: Optional[str]) -> None:
+        """Set config user."""
+        self._conf["user"] = val
 
     @property
     def token(self) -> Optional[str]:

@@ -83,25 +83,35 @@ def version() -> None:
 
 
 @main.command(name="config")
-@click.option("-u", "--url", type=str, help="TAO base API URL.")
+@click.option("-a", "--api-url", type=str, help="TAO base API URL.")
+@click.option("-u", "--username", type=str, help="Account username.")
 @click.pass_context
-def configure(ctx: click.Context, url: Optional[str]) -> None:
+def configure(
+    ctx: click.Context,
+    api_url: Optional[str],
+    username: Optional[str],
+) -> None:
     """Configure client/CLI."""
     config: Config = ctx.obj[CONTEXT_CONFIG]
 
-    if url:
-        if not is_url(url):
+    if api_url:
+        if not is_url(api_url):
             logger.error("Given URL is not valid")
             sys.exit(1)
 
-        logger.info(f"URL configured: {url}")
-        config.url = url
+        logger.info(f"URL configured: {api_url}")
+        config.url = api_url
+
+    if username:
+        logger.info(f"Username configured: {username}")
+        config.user = username
 
     if any(ctx.params.values()):
         config.write()
     else:
         _auth = "[blue]SET" if config.token else None
         console.print(f"[bold]URL:[/bold] {config.url}")
+        console.print(f"[bold]User:[/bold] {config.user}")
         console.print(f"[bold]Auth:[/bold] {_auth}")
 
 
@@ -118,13 +128,14 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
         logger.error(err)
         sys.exit(1)
 
+    username = username if username else config.user
     if not username:
         username = prompt.Prompt.ask("Enter your username")
     if not password:
         password = prompt.Prompt.ask("Enter your password", password=True)
 
     try:
-        token = client.login(username, password)
+        token = client.login(password, username=username)
     except RequestError as err:
         logger.error(err)
         sys.exit(1)

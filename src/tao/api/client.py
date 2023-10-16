@@ -33,15 +33,17 @@ class APIClient:
             msg = "URL not configured correctly."
             raise ConfigurationError(msg)
 
-        self.token = config.token
         self.api_url = config.url.rstrip("/")
+        self.user = config.user
+        self.token = config.token
 
-    def login(self, username: str, password: str) -> str:
+    def login(self, password: str, username: Optional[str] = None) -> str:
         """Login user and retrieve auth token.
 
         Raises:
             tao.exceptions.RequestError: request error.
         """
+        username = username if username else self.user
         try:
             response = self.request(
                 "POST",
