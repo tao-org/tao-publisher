@@ -30,10 +30,18 @@ class Config:
         tao.exceptions.ConfigurationError: config file content is invalid.
     """
 
-    def __init__(self, file_path: Optional[Path] = None) -> None:
+    def __init__(
+        self,
+        file_path: Optional[Path] = None,
+        load: bool = True,
+        url: Optional[str] = None,
+        user: Optional[str] = None,
+        token: Optional[str] = None,
+    ) -> None:
         self._file_path = file_path if file_path else _DEFAULT_CONFIG_FILE_PATH
-        self._conf = _ConfigDict(url=None, user=None, token=None)
-        self.load()
+        self._conf = _ConfigDict(url=url, user=user, token=token)
+        if load:
+            self.load()
 
     def load(self) -> None:
         """Load config file.
