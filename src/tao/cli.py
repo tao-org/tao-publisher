@@ -19,6 +19,7 @@ from tao.exceptions import (
     SchemasDifferenceError,
 )
 from tao.logging import get_console, get_logger, setup_logging
+from tao.models import Component, ComponentDescriptor, Container
 from tao.utils.file.exceptions import FileContentError, FileExtensionInvalidError
 from tao.utils.http import is_url
 
@@ -309,16 +310,10 @@ def container_get(
         logger.error(err)
         sys.exit(1)
 
-    exclude_set = set()
-    if not applications:
-        exclude_set.add("applications")
-    if not logo:
-        exclude_set.add("logo")
-    _display_models(
+    _display_containers(
         containers,
-        label_prop="name",
-        exclude_set=exclude_set,
-        children=["applications"],
+        applications=applications,
+        logo=logo,
         json_format=json_format,
         clean=clean,
     )
@@ -400,16 +395,10 @@ def container_list(
         logger.error(err)
         sys.exit(1)
 
-    exclude_set = set()
-    if not applications:
-        exclude_set.add("applications")
-    if not logo:
-        exclude_set.add("logo")
-    _display_models(
+    _display_containers(
         containers,
-        label_prop="name",
-        exclude_set=exclude_set,
-        children=["applications"],
+        applications=applications,
+        logo=logo,
         json_format=json_format,
         clean=clean,
     )
@@ -494,16 +483,8 @@ def component_get(
         logger.error(err)
         sys.exit(1)
 
-    _display_models(
+    _display_components(
         components,
-        label_prop="label",
-        exclude_set=set(),
-        children=[
-            "sources",
-            "targets",
-            "dataDescriptor",
-            "parameterDescriptors",
-        ],
         json_format=json_format,
         clean=clean,
     )
@@ -576,11 +557,50 @@ def component_list(
         logger.error(err)
         sys.exit(1)
 
+    _display_components(
+        components,
+        json_format=json_format,
+        clean=clean,
+    )
+
+
+def _display_containers(
+    containers: List[Container],
+    applications: bool,
+    logo: bool,
+    json_format: bool,
+    clean: bool,
+) -> None:
+    exclude_set = set()
+    if not applications:
+        exclude_set.add("applications")
+    if not logo:
+        exclude_set.add("logo")
+    _display_models(
+        containers,
+        label_prop="name",
+        exclude_set=exclude_set,
+        children=["applications"],
+        json_format=json_format,
+        clean=clean,
+    )
+
+
+def _display_components(
+    components: Sequence[Union[Component, ComponentDescriptor]],
+    json_format: bool,
+    clean: bool,
+) -> None:
     _display_models(
         components,
         label_prop="label",
         exclude_set=set(),
-        children=[],
+        children=[
+            "sources",
+            "targets",
+            "dataDescriptor",
+            "parameterDescriptors",
+        ],
         json_format=json_format,
         clean=clean,
     )
