@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import yaml
-from yaml.scanner import ScannerError
 
 from .exceptions import FileContentError, FileExtensionInvalidError
 
@@ -72,7 +71,7 @@ def _parse_yaml(file_path: Path, /) -> FileContent:
         with file_path.open() as file:
             content = yaml.safe_load(file)
         return _parse_content(content)
-    except ScannerError as err:
+    except (TypeError, yaml.YAMLError) as err:
         msg = f"Invalid YAML file: {file_path}\n"
         msg += "Please check for syntax errors."
         raise FileContentError(msg) from err
