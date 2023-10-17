@@ -1,4 +1,11 @@
-"""File utils module."""
+"""File-related utilities package.
+
+This package contains utilities for file management. This includes reading, writing
+and other operations. The goal is _not_ to rewrite python standard libraries like
+`os.path`, `pathlib`, or `shutil`.
+
+Only features with added value will be implemented here.
+"""
 
 from typing import List
 

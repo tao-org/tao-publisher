@@ -1,4 +1,14 @@
-"""TAO Publisher top-level module."""
+"""TAO Publisher top-level package.
+
+This python package delivers a CLI and a python API to interact with the TAO API.
+
+Available features:
+
+- List, get, and delete of **Toolbox Containers**.
+- List, get, and delete of **Processing Components**.
+- Definition of Toolbox Containers and Processing Components with a declarative file,
+  and a publish mechanism to register them inside TAO.
+"""
 
 from importlib.metadata import PackageNotFoundError, version
 

@@ -1,4 +1,12 @@
-"""File writers utilities."""
+"""File writers utilities.
+
+This module contains the configuration-writing function utilities, with a main
+`write_file` function that allows you to write a configuration in a file from a `dict`
+with `str` keys. Multiple file extensions are supported, and support for other
+can be added in the future.
+
+Currently support writing to YAML (`.yml`, `.yaml`), and JSON (`.json`).
+"""
 
 import json
 from functools import wraps
@@ -16,7 +24,7 @@ _WRITERS: Dict[WriterFunc, List[str]] = {}
 
 
 def get_valid_writable_extensions() -> List[str]:
-    """Get all extensions with existing writer."""
+    """Get all extensions with an existing writer."""
     extensions = set()
     for _extensions in _WRITERS.values():
         extensions.update(_extensions)
@@ -24,7 +32,7 @@ def get_valid_writable_extensions() -> List[str]:
 
 
 def get_writer(file_ext: str, /) -> Optional[WriterFunc]:
-    """Get writer for files with corresponding file extension."""
+    """Get writer for config files with the corresponding file extension."""
     for writer_func, extensions in _WRITERS.items():
         if file_ext in extensions:
             return writer_func
@@ -32,10 +40,17 @@ def get_writer(file_ext: str, /) -> Optional[WriterFunc]:
 
 
 def write_file(file_path: Path, /, data: FileContent) -> None:
-    """Write data to file.
+    """Write data to configuration file.
+
+    The configuration file content is a `dict` with `str` keys.
+
+    Warning:
+        If your data contains custom python objects, you may encounter some errors.
+        It is recommended to transform everything to python builtins types.
 
     Raises:
-        FileExistsError: file already exists at `file_path`.
+        FileExistsError:
+            file already exists at `file_path`.
         tao.utils.file.exceptions.FileExtensionInvalidError:
             file extension is not compatible.
     """

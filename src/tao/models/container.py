@@ -1,4 +1,14 @@
-"""TAO container models/schemas."""
+"""TAO container models/schemas.
+
+This module contains the models related to TAO **Toolbox Containers**.
+A Toolbox Container is simply a Docker Image that contains executables and/or scripts,
+called applications. To put it differently, a container is an image that contains
+applications, and serves as an environment to execute these programs.
+
+Note:
+    A Toolbox Container and its applications are exploited by the Processing Components.
+    See the `tao.models.component` module to learn more about components.
+"""
 
 from pathlib import Path
 from typing import List, Optional

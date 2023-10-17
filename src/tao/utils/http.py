@@ -1,4 +1,15 @@
-"""HTTP utilities."""
+"""HTTP utilities.
+
+Attributes:
+    HTTP_401_UNAUTHORIZED(int): constant for HTTP 401 status code.
+    HttpMethodName: type alias for HTTP methods names.
+    SerializedFile:
+        type alias for file serialized for upload. It is a tuple of:
+
+        - file name (`str`)
+        - file content (`bytes`)
+        - file mime type (`str`)
+"""
 
 import mimetypes
 import re
@@ -15,12 +26,13 @@ SerializedFile = Tuple[str, bytes, str]
 def is_url(text: str, /) -> bool:
     """Return True if text is a valid URL, False otherwise.
 
-    >>> is_url("test")
-    False
-    >>> is_url("test://test")
-    False
-    >>> is_url("https://www.csgroup.eu")
-    True
+    Examples:
+        >>> is_url("test")
+        False
+        >>> is_url("test://test")
+        False
+        >>> is_url("https://www.csgroup.eu")
+        True
     """
     parse_result = urlparse(text)
     return parse_result.scheme in ["http", "https"] and all(
@@ -31,8 +43,9 @@ def is_url(text: str, /) -> bool:
 def slugify(text: str, /) -> str:
     """Slugify string, URL-friendly and filename-friendly.
 
-    >>> slugify("Hello World!")
-    'hello-world'
+    Examples:
+        >>> slugify("Hello World!")
+        'hello-world'
     """
     text = text.lower().strip()
     text = re.sub(r"[^\w\s-]", "", text)
@@ -42,7 +55,17 @@ def slugify(text: str, /) -> str:
 
 
 def serialize_files(files: List[Path], /, *, ctx_path: Path) -> List[SerializedFile]:
-    """Prepare files upload by transforming list of path to list of file data."""
+    """Prepare files upload by transforming list of path to list of serialized files.
+
+    Read each files and return list of `SerializedFile`. This method do not raise an
+    error if a file is missing, files that do not exists will simply not be in the
+    resulting list! You can check the length of the result against the length of the
+    given files list to assert if no file was missed.
+
+    Note:
+        This method calls `serialize_file` for each file path,
+        check it above to learn more!
+    """
     files_data: List[SerializedFile] = []
     for file_path in files:
         file = serialize_file(file_path, ctx_path=ctx_path)
@@ -57,7 +80,12 @@ def serialize_file(
     *,
     ctx_path: Path,
 ) -> Optional[SerializedFile]:
-    """Prepare file upload by reading path to file data."""
+    """Prepare file upload by reading file and serializing it.
+
+    Read file and return a SerializedFile that can be used with
+    `requests` package "files" parameter. Mime type defaults to
+    'text/plain', and if the file do not exists `None` is returned.
+    """
     file_path = (ctx_path / file_path).resolve()
     if file_path.is_file():
         file_mimetype = mimetypes.guess_type(file_path)[0]

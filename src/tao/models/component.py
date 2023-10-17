@@ -1,4 +1,13 @@
-"""TAO component models/schemas."""
+"""TAO component models/schemas.
+
+This module contains the models related to TAO **Processing Components**.
+A Processing Component is used to define processing pipelines in TAO,
+more precisely **Workflows**.
+
+Note:
+    A Processing Component uses a applications from a Toolbox Container to work.
+    See the `tao.models.container` module to learn more about containers.
+"""
 
 from pathlib import Path
 from typing import List, Literal, Optional

@@ -1,4 +1,4 @@
-"""Publish API definitions."""
+"""Publication API module."""
 
 import json
 import logging
@@ -10,13 +10,13 @@ from tao.logging import get_logger
 from tao.models.publish import PublishSpec
 from tao.utils.http import SerializedFile, serialize_file, serialize_files
 
-from ._base import EndpointAPI
+from .base import EndpointAPI
 
 logger = get_logger()
 
 
 class PublishAPI(EndpointAPI, endpoint="/docker/register", auth=True):
-    """Publish API client.
+    """Publish API client for toolbox containers and processing components.
 
     Raises:
         tao.exceptions.ConfigurationError:
@@ -26,6 +26,10 @@ class PublishAPI(EndpointAPI, endpoint="/docker/register", auth=True):
 
     def push(self, publish_spec: PublishSpec, ctx_path: Path) -> None:
         """Push new container and components.
+
+        Note:
+            Don't create a `PublishSpec` manually, use the method
+            `tao.core.read_publish_file` to read it from a specification file.
 
         Raises:
             tao.exceptions.RequestError: request error.

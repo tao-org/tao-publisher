@@ -1,4 +1,12 @@
-"""Core functionalities."""
+"""Core functionalities.
+
+This module contains functions used for publication, but which are not directly
+linked to the TAO API. It is more our management on the client side of the publication,
+which is why they are not in `tao.api` which has for intended purpose to be an
+interface of the TAO API.
+
+It is here that initialization and reading of a publish file is defined.
+"""
 
 import uuid
 from pathlib import Path
@@ -23,7 +31,8 @@ def read_publish_file(file_path: Path) -> PublishSpec:
     """Read publish spec from file.
 
     Raises:
-        FileNotFoundError: file_path do not point to an existing file.
+        FileNotFoundError:
+            file_path do not point to an existing file.
         tao.exceptions.PublishDefinitionError:
             file do not define a valid publication request.
         tao.utils.file.exceptions.FileExtensionInvalidError:
@@ -39,7 +48,7 @@ def read_publish_file(file_path: Path) -> PublishSpec:
 
 
 def init_publish_file(name: str, path: Path, file_format: str) -> Path:
-    """Create publish spec file.
+    """Init publish spec file with default values and structure.
 
     Raises:
         FileExistsError:

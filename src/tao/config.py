@@ -24,7 +24,22 @@ class _ConfigDict(TypedDict):
 
 
 class Config:
-    """Class containing the project configuration.
+    """Manage the configuration.
+
+    By default read config file.
+
+    Parameters:
+        file_path:
+            path to the config file. Defaults to _~/.config/tao/config.yaml_
+            if not given.
+        load: whether to load the config file of not.
+        url: default url to use, may be overwritten by config file content.
+        user: default user to use, may be overwritten by config file content.
+        token: default token to use, may be overwritten by config file content.
+
+    Note:
+        If you do not wish to load the file with `load=False` don't forget
+        to at least set your config's `url` and `token`.
 
     Raises:
         tao.exceptions.ConfigurationError: config file content is invalid.
@@ -49,7 +64,7 @@ class Config:
             self.load()
 
     def load(self) -> None:
-        """Load config file.
+        """Load config from config file.
 
         Raises:
             tao.exceptions.ConfigurationError: config file content is invalid.

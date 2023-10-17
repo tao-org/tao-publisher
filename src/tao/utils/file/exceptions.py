@@ -1,9 +1,9 @@
-"""File errors."""
+"""File-related errors used by this package's modules."""
 
 
 class FileContentError(RuntimeError):
-    """File content error."""
+    """The file content is invalid."""
 
 
 class FileExtensionInvalidError(RuntimeError):
-    """File extension is invalid."""
+    """The file extension is invalid."""

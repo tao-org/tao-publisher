@@ -21,6 +21,16 @@ logger = get_logger()
 class APIClient:
     """TAO API Client.
 
+    Direct API client to the TAO API. Serves as a basic python interface.
+    With the `request` method you can send any requests you desire
+    to the TAO API. The `login` method manages authentication.
+
+    For specific operations, with easy data/error handling, use the appropriate
+    endpoints API classes in the `tao.api.endpoints` package.
+
+    Parameters:
+        config: config object, default config will be used if not provided.
+
     Raises:
         tao.exceptions.ConfigurationError: config url is not set.
     """

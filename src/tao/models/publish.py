@@ -1,4 +1,10 @@
-"""TAO files models/schemas."""
+"""TAO publish-related models/schemas.
+
+This module contains the models related to the publication feature of this package.
+There are no real "Publish data schemas" in TAO API. But, this module contains what
+is needed to encapsulate and validate the data of the register endpoint. It is used
+to parse a specification file.
+"""
 
 
 from pathlib import Path
@@ -11,7 +17,11 @@ from .container import ContainerDescriptor
 
 
 class PublishSpec(BaseModel):
-    """Publish specification."""
+    """Publish spec.
+
+    Publish file structure spec, defines the data structure of the file used
+    to publish toolbox containers and processing components.
+    """
 
     name: str = Field(default="")
     description: str = Field(default="")

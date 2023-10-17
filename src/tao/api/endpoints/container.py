@@ -1,4 +1,4 @@
-"""Container-related API definitions."""
+"""Container-related API module."""
 
 from enum import Enum
 from typing import Any, Dict, List, Optional
@@ -9,13 +9,13 @@ from tao.exceptions import RequestResponseError, SchemasDifferenceError
 from tao.logging import get_logger
 from tao.models.container import Container
 
-from ._base import EndpointAPI
+from .base import EndpointAPI
 
 logger = get_logger()
 
 
 class ContainerAPI(EndpointAPI, endpoint="/docker", auth=True):
-    """Container API client.
+    """API client for TAO toolbox containers.
 
     Raises:
         tao.exceptions.ConfigurationError:
@@ -36,10 +36,11 @@ class ContainerAPI(EndpointAPI, endpoint="/docker", auth=True):
         sort_by_field: Optional[str] = None,
         sort_direction: Optional[SortDirection] = None,
     ) -> List[Container]:
-        """List containers registered in TAO.
+        """List toolbox containers registered in TAO.
 
         Raises:
-            tao.exceptions.RequestError: request error.
+            tao.exceptions.RequestError:
+                request error.
             tao.exceptions.SchemasDifferenceError:
                 local models differs from server response format,
                 schemas could have changed.
@@ -67,10 +68,11 @@ class ContainerAPI(EndpointAPI, endpoint="/docker", auth=True):
             raise SchemasDifferenceError(err) from err
 
     def get(self, container_id: str) -> Container:
-        """Get container description.
+        """Get toolbox container details.
 
         Raises:
-            tao.exceptions.RequestError: request error.
+            tao.exceptions.RequestError:
+                request error.
             tao.exceptions.SchemasDifferenceError:
                 local models differs from server response format,
                 schemas could have changed.
@@ -86,7 +88,7 @@ class ContainerAPI(EndpointAPI, endpoint="/docker", auth=True):
             raise SchemasDifferenceError(err) from err
 
     def delete(self, container_id: str) -> None:
-        """Delete container.
+        """Delete toolbox container.
 
         Raises:
             tao.exceptions.RequestError: request error.

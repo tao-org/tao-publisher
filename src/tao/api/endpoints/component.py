@@ -1,4 +1,4 @@
-"""Component-related API definitions."""
+"""Component-related API module."""
 
 from enum import Enum
 from typing import Any, Dict, List, Optional
@@ -9,13 +9,13 @@ from tao.exceptions import RequestResponseError, SchemasDifferenceError
 from tao.logging import get_logger
 from tao.models.component import Component, ComponentDescriptor
 
-from ._base import EndpointAPI
+from .base import EndpointAPI
 
 logger = get_logger()
 
 
 class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):
-    """Component API client.
+    """API client for TAO processing components.
 
     Raises:
         tao.exceptions.ConfigurationError:
@@ -36,10 +36,11 @@ class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):
         sort_by: Optional[str] = None,
         sort_direction: Optional[SortDirection] = None,
     ) -> List[Component]:
-        """List components registered in TAO.
+        """List processing components registered in TAO.
 
         Raises:
-            tao.exceptions.RequestError: request error.
+            tao.exceptions.RequestError:
+                request error.
             tao.exceptions.SchemasDifferenceError:
                 local models differs from server response format,
                 schemas could have changed.
@@ -67,10 +68,11 @@ class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):
             raise SchemasDifferenceError(err) from err
 
     def get(self, component_id: str) -> ComponentDescriptor:
-        """Get component description.
+        """Get processing component details.
 
         Raises:
-            tao.exceptions.RequestError: request error.
+            tao.exceptions.RequestError:
+                request error.
             tao.exceptions.SchemasDifferenceError:
                 local models differs from server response format,
                 schemas could have changed.
@@ -90,7 +92,7 @@ class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):
             raise SchemasDifferenceError(err) from err
 
     def delete(self, component_id: str) -> None:
-        """Delete component.
+        """Delete processing component.
 
         Raises:
             tao.exceptions.RequestError: request error.

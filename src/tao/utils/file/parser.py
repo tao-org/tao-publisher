@@ -1,4 +1,12 @@
-"""File parsers utilities."""
+"""File parsers utilities.
+
+This modules contains configuration-parsing function utilities, with a main
+`parse_file` function that allows you to retrieve a file's content as a `dict` with
+`str` as top-level keys. Multiple file extensions are supported, and support for other
+can be added in the future.
+
+Currently support parsing for YAML (`.yml`, `.yaml`), and JSON (`.json`).
+"""
 
 import json
 from functools import wraps
@@ -16,7 +24,7 @@ _PARSERS: Dict[ParserFunc, List[str]] = {}
 
 
 def get_valid_parsable_extensions() -> List[str]:
-    """Get all extensions with existing parser."""
+    """Get all extensions with an existing parser."""
     extensions = set()
     for _extensions in _PARSERS.values():
         extensions.update(_extensions)
@@ -24,7 +32,7 @@ def get_valid_parsable_extensions() -> List[str]:
 
 
 def get_parser(file_ext: str, /) -> Optional[ParserFunc]:
-    """Get parser for files with corresponding file extension."""
+    """Get parser for config files with the corresponding file extension."""
     for parser_func, extensions in _PARSERS.items():
         if file_ext in extensions:
             return parser_func
@@ -32,10 +40,13 @@ def get_parser(file_ext: str, /) -> Optional[ParserFunc]:
 
 
 def parse_file(file_path: Path, /) -> FileContent:
-    """Parse file.
+    """Parse a configuration file.
+
+    The configuration file  content is returned as a `dict` with `str` keys.
 
     Raises:
-        FileNotFoundError: file_path do not point to an existing file.
+        FileNotFoundError:
+            file_path do not point to an existing file.
         tao.utils.file.exceptions.FileExtensionInvalidError:
             file extension is not compatible.
         tao.utils.file.exceptions.FileContentError:

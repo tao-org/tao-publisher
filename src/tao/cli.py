@@ -283,7 +283,12 @@ def container_delete(
     is_flag=True,
     help="Don't output default values, as well as null.",
 )
-@click.option("-l", "--logo", is_flag=True, help="Display containers logos in base64.")
+@click.option(
+    "-l",
+    "--logo",
+    is_flag=True,
+    help="Display containers logos (binary content).",
+)
 @click.pass_context
 def container_get(
     ctx: click.Context,
@@ -292,7 +297,7 @@ def container_get(
     clean: bool,
     logo: bool,
 ) -> None:
-    """Get container."""
+    """Get container details."""
     api: ContainerAPI = ctx.obj[CONTEXT_API]
     try:
         containers = [api.get(_id) for _id in container_id]
@@ -456,7 +461,7 @@ def component_get(
     json_format: bool,
     clean: bool,
 ) -> None:
-    """Get component."""
+    """Get component details."""
     api: ComponentAPI = ctx.obj[CONTEXT_API]
     try:
         components = [api.get(_id) for _id in component_id]
@@ -522,7 +527,7 @@ def component_list(
     json_format: bool,
     clean: bool,
 ) -> None:
-    """List component."""
+    """List components."""
     api: ComponentAPI = ctx.obj[CONTEXT_API]
 
     try:
