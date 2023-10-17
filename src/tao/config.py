@@ -39,7 +39,12 @@ class Config:
         token: Optional[str] = None,
     ) -> None:
         self._file_path = file_path if file_path else _DEFAULT_CONFIG_FILE_PATH
-        self._conf = _ConfigDict(url=url, user=user, token=token)
+        self._conf = _ConfigDict(url=None, user=None, token=None)
+
+        self.url = url
+        self.user = user
+        self.token = token
+
         if load:
             self.load()
 
