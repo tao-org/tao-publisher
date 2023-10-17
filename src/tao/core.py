@@ -34,7 +34,8 @@ def read_publish_file(file_path: Path) -> PublishSpec:
     try:
         return PublishSpec(**parse_file(file_path))
     except ValidationError as err:
-        raise PublishDefinitionError(err) from err
+        msg = "Validation failed.\n"
+        raise PublishDefinitionError(msg, validation_error=err) from err
 
 
 def init_publish_file(name: str, path: Path, file_format: str) -> Path:

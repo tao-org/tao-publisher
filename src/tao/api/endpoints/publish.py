@@ -5,6 +5,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+from tao.exceptions import PublishDefinitionError
 from tao.logging import get_logger
 from tao.models.publish import PublishSpec
 from tao.utils.http import SerializedFile, serialize_file, serialize_files
@@ -28,6 +29,7 @@ class PublishAPI(EndpointAPI, endpoint="/docker/register", auth=True):
 
         Raises:
             tao.exceptions.RequestError: request error.
+            tao.exceptions.PublishDefinitionError: error in publish file.
         """
         data, files = self._prepare_push_request(
             publish_spec,
@@ -61,17 +63,28 @@ class PublishAPI(EndpointAPI, endpoint="/docker/register", auth=True):
             )
             if logo:
                 files.append(("containerLogo", logo))
+            else:
+                msg = f"Could not find logo file: {publish_spec.container_logo}"
+                raise PublishDefinitionError(msg)
 
         docker_files = serialize_files(
             publish_spec.docker_files,
             ctx_path=ctx_path,
         )
+        if len(docker_files) != len(publish_spec.docker_files):
+            msg = f"Missing at least one docker files: {publish_spec.docker_files}"
+            raise PublishDefinitionError(msg)
         files.extend(("dockerFiles", f) for f in docker_files)
 
         auxiliary_files = serialize_files(
             publish_spec.auxiliary_files,
             ctx_path=ctx_path,
         )
+        if len(auxiliary_files) != len(publish_spec.auxiliary_files):
+            msg = (
+                f"Missing at least one auxiliary files: {publish_spec.auxiliary_files}"
+            )
+            raise PublishDefinitionError(msg)
         files.extend(("auxiliaryFiles", f) for f in auxiliary_files)
 
         return data, files

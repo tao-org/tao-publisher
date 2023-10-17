@@ -13,12 +13,18 @@ class ConfigurationError(ValueError):
 
 
 class PublishDefinitionError(RuntimeError):
-    """Publish definition validation error."""
+    """Publish definition error."""
 
-    def __init__(self, validation_error: ValidationError) -> None:
-        msg = "Publish definition is invalid, "
-        msg += "please check the following validation errors:\n\n"
-        msg += str(validation_error)
+    def __init__(
+        self,
+        reason: str = "",
+        validation_error: Optional[ValidationError] = None,
+    ) -> None:
+        msg = "Publish definition is invalid.\n"
+        msg += reason
+        if validation_error:
+            msg += "Please check the following validation errors:\n\n"
+            msg += str(validation_error)
         super().__init__(msg)
         self.validation_error = ValidationError
         self.msg = msg
