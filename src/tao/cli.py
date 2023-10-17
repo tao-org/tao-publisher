@@ -108,7 +108,7 @@ def configure(
         config.user = username
 
     if any(ctx.params.values()):
-        config.write()
+        config.save()
     else:
         _auth = "[blue]SET" if config.token else None
         console.print(f"[bold]URL:[/bold] {config.url}")
@@ -144,7 +144,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
     logger.info("Auth token retrieved")
     logger.debug(f"Auth token: {token}")
     config.token = token
-    config.write()
+    config.save()
 
 
 @main.command

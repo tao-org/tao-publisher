@@ -71,8 +71,8 @@ class Config:
         else:
             logger.debug(f"Config file not found at: {self._file_path}")
 
-    def write(self) -> None:
-        """Write config file."""
+    def save(self) -> None:
+        """Save config to config file."""
         _config_dir = self._file_path.parent
         if not _config_dir.is_dir():
             logger.debug(f"Create config dir: {_config_dir}")
