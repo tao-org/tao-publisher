@@ -13,7 +13,7 @@ from tao.exceptions import (
     RequestResponseStatusError,
 )
 from tao.logging import get_logger
-from tao.utils.http import HTTP_401_UNAUTHORIZED
+from tao.utils.http import HTTP_401_UNAUTHORIZED, HttpMethodName
 
 logger = get_logger()
 
@@ -70,7 +70,7 @@ class APIClient:
 
     def request(
         self,
-        method: str,
+        method: HttpMethodName,
         api_path: str,
         params: Optional[Dict[str, str]] = None,
         data: Optional[Any] = None,  ## noqa: ANN401

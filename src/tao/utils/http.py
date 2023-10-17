@@ -3,11 +3,12 @@
 import mimetypes
 import re
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Literal, Optional, Tuple
 from urllib.parse import urlparse
 
 HTTP_401_UNAUTHORIZED = 401
 
+HttpMethodName = Literal["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 SerializedFile = Tuple[str, bytes, str]
 
 
