@@ -106,7 +106,6 @@ plugins:
             docstring_style: google
             group_by_category: true
             heading_level: 1
-            inherited_members: true
             line_length: 88
             merge_init_into_class: true
             separate_signature: true

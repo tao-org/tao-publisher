@@ -8,7 +8,6 @@ some new ideas to improve it!
 
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
 - [Getting started](#getting-started)
   - [Pre-requisites](#pre-requisites)
   - [Clone the repository](#clone-the-repository)
