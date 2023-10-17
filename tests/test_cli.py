@@ -3,7 +3,7 @@
 from importlib.metadata import metadata
 
 from click.testing import CliRunner
-from tao.cli import main
+from tao._cli import main
 
 runner = CliRunner()
 

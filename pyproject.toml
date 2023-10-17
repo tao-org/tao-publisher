@@ -83,7 +83,7 @@ security = [
 ]
 
 [project.scripts]
-tao = "tao.cli:main"
+tao = "tao._cli:main"
 
 # -----------------------------------------------
 # Build & Packaging
