@@ -6,13 +6,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 from tao.exceptions import PublishDefinitionError
-from tao.logging import get_logger
+from tao.logging import _get_logger
 from tao.models.publish import PublishSpec
 from tao.utils.http import SerializedFile, serialize_file, serialize_files
 
 from .base import EndpointAPI
 
-logger = get_logger()
+logger = _get_logger()
 
 
 class PublishAPI(EndpointAPI, endpoint="/docker/register", auth=True):

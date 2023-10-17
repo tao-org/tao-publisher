@@ -6,12 +6,12 @@ from typing import Any, Dict, List, Optional
 from pydantic import ValidationError
 
 from tao.exceptions import RequestResponseError, SchemasDifferenceError
-from tao.logging import get_logger
+from tao.logging import _get_logger
 from tao.models.component import Component, ComponentDescriptor
 
 from .base import EndpointAPI
 
-logger = get_logger()
+logger = _get_logger()
 
 
 class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):

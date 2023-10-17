@@ -18,13 +18,13 @@ from tao.exceptions import (
     RequestError,
     SchemasDifferenceError,
 )
-from tao.logging import get_console, get_logger, setup_logging
+from tao.logging import _get_console, _get_logger, setup_logging
 from tao.models import Component, ComponentDescriptor, Container
 from tao.utils.file.exceptions import FileContentError, FileExtensionInvalidError
 from tao.utils.http import is_url
 
-logger = get_logger()
-console = get_console()
+logger = _get_logger()
+console = _get_console()
 
 
 CONTEXT_CONFIG = "config"

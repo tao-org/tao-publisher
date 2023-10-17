@@ -56,7 +56,7 @@ def setup_logging(verbosity: int) -> None:
         datefmt=LOG_DATE_FORMAT,
         handlers=[
             RichHandler(
-                console=get_console(),
+                console=_get_console(),
                 show_time=show_time,
                 show_level=show_level,
                 show_path=False,
@@ -65,14 +65,14 @@ def setup_logging(verbosity: int) -> None:
             ),
         ],
     )
-    get_logger().setLevel(log_level)
+    _get_logger().setLevel(log_level)
 
 
-def get_logger() -> logging.Logger:
+def _get_logger() -> logging.Logger:
     """Return project logger."""
     return logging.getLogger("kiln")
 
 
-def get_console() -> Console:
+def _get_console() -> Console:
     """Return project console (rich)."""
     return _console

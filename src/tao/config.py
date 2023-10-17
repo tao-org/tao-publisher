@@ -8,13 +8,13 @@ import click
 import yaml
 
 from tao.exceptions import ConfigurationError
-from tao.logging import get_logger
+from tao.logging import _get_logger
 
 _CONFIG_FILENAME = "config.yaml"
 _DEFAULT_CONFIG_DIR = Path(click.get_app_dir(__package__))
 _DEFAULT_CONFIG_FILE_PATH = _DEFAULT_CONFIG_DIR / _CONFIG_FILENAME
 
-logger = get_logger()
+logger = _get_logger()
 
 
 class _ConfigDict(TypedDict):

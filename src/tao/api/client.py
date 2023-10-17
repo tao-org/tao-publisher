@@ -12,10 +12,10 @@ from tao.exceptions import (
     RequestResponseError,
     RequestResponseStatusError,
 )
-from tao.logging import get_logger
+from tao.logging import _get_logger
 from tao.utils.http import HTTP_401_UNAUTHORIZED, HttpMethodName
 
-logger = get_logger()
+logger = _get_logger()
 
 
 class APIClient:

@@ -6,12 +6,12 @@ from typing import Any, Dict, List, Optional
 from pydantic import ValidationError
 
 from tao.exceptions import RequestResponseError, SchemasDifferenceError
-from tao.logging import get_logger
+from tao.logging import _get_logger
 from tao.models.container import Container
 
 from .base import EndpointAPI
 
-logger = get_logger()
+logger = _get_logger()
 
 
 class ContainerAPI(EndpointAPI, endpoint="/docker", auth=True):
