@@ -50,7 +50,7 @@ theme:
       accent: amber
       toggle:
         icon: material/weather-night
-        name: Switch to system preference
+        name: Switch to light mode
 
 # Extensions
 markdown_extensions:
