@@ -141,7 +141,7 @@ def login(ctx: click.Context, username: Optional[str], password: Optional[str]) 
         logger.error(err)
         sys.exit(1)
 
-    logger.info("Auth token retrieved")
+    logger.info("Authenticated.")
     logger.debug(f"Auth token: {token}")
     config.token = token
     config.save()
