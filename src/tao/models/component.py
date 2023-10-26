@@ -10,7 +10,7 @@ Note:
 """
 
 from pathlib import Path
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Union
 
 from pydantic import AliasChoices, BaseModel, Field, field_validator
 from typing_extensions import TypedDict
@@ -137,6 +137,11 @@ class ParameterDescriptor(BaseModel):
             msg = f"Value {val} should be one of: {', '.join(possible_types)}"
             raise ValueError(msg)
         return val
+
+    @field_validator("default_value", mode="before")
+    @classmethod
+    def _default_value_transform(cls, val: Union[float, str]) -> Optional[str]:
+        return str(val) if val is not None else None
 
 
 class Component(BaseModel):

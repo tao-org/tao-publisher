@@ -36,7 +36,7 @@ class ContainerDescriptor(BaseModel):
     description: str
     tag: str = Field(default="latest")
     application_path: Optional[str] = Field(alias="applicationPath", default=None)
-    format_: List[str] = Field(alias="format", default_factory=list)
+    format_: Optional[List[str]] = Field(alias="format", default=None)
     format_name_parameter: Optional[str] = Field(
         alias="formatNameParameter",
         default=None,
