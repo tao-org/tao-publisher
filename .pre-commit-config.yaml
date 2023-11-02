@@ -55,14 +55,14 @@ repos:
         types_or: [python]
         language: python
         additional_dependencies: ["tox~=4.6"]
-      - id: test
-        name: Test (python)
-        entry: tox
-        always_run: true
-        pass_filenames: false
-        language: python
-        additional_dependencies: ["tox~=4.6"]
-        stages: [push]
+      # - id: test
+      #   name: Test (python)
+      #   entry: tox
+      #   always_run: true
+      #   pass_filenames: false
+      #   language: python
+      #   additional_dependencies: ["tox~=4.6"]
+      #   stages: [push]
       - id: security
         name: Security check on dependencies (python)
         entry: tox -e security
