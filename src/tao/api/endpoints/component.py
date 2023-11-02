@@ -45,10 +45,12 @@ class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):
                 local models differs from server response format,
                 schemas could have changed.
         """
+        if not sort_by and (page_number is not None or page_size is not None):
+            sort_by = "id"
         query_params = {
             "pageNumber": page_number,
             "pageSize": page_size,
-            "sortBy": sort_by if sort_by else "id",
+            "sortBy": sort_by,
             "sortDirection": sort_direction.value if sort_direction else None,
         }
         params = {k: str(v) for k, v in query_params.items() if v}

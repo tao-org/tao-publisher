@@ -45,10 +45,12 @@ class ContainerAPI(EndpointAPI, endpoint="/docker", auth=True):
                 local models differs from server response format,
                 schemas could have changed.
         """
+        if not sort_by_field and (page_number is not None or page_size is not None):
+            sort_by_field = "id"
         query_params = {
             "pageNumber": page_number,
             "pageSize": page_size,
-            "sortByField": sort_by_field if sort_by_field else "id",
+            "sortByField": sort_by_field,
             "sortDirection": sort_direction.value if sort_direction else None,
         }
         params = {k: str(v) for k, v in query_params.items() if v}
