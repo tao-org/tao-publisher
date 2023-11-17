@@ -14,7 +14,7 @@ PRE_COMMIT=$(PYTHON) -mpre_commit
 default: pipeline
 
 release: ## Bump version, create tag and update CHANGELOG.
-	@$(PYTHON) -mcommitizen bump --yes --annotated-tag --changelog
+	@$(PYTHON) -mcommitizen bump --yes $(VERSION)
 
 build: ## Build wheel and tar.gz in 'dist/'.
 	@$(PYTHON) -mbuild
