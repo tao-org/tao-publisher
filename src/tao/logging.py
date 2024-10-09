@@ -70,7 +70,7 @@ def setup_logging(verbosity: int) -> None:
 
 def _get_logger() -> logging.Logger:
     """Return project logger."""
-    return logging.getLogger("kiln")
+    return logging.getLogger(__package__)
 
 
 def _get_console() -> Console:
