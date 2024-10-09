@@ -1,13 +1,13 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
-default_stages: [commit]
+default_stages: [pre-commit]
 default_install_hook_types: [pre-commit, commit-msg, pre-push]
 default_language_version:
-  python: python3
+  python: python3.10
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -28,54 +28,43 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/zricethezav/gitleaks
-    rev: v8.18.0
+    rev: v8.20.1
     hooks:
       - id: gitleaks
 
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v3.10.0
+    rev: v3.29.1
     hooks:
       - id: commitizen
       - id: commitizen-branch
         args: [--rev-range, HEAD]
-        stages: [push]
+        stages: [pre-push]
 
   - repo: https://github.com/abravalheri/validate-pyproject
-    rev: v0.14
+    rev: v0.20.2
     hooks:
       - id: validate-pyproject
 
   - repo: local
     hooks:
-      - id: lint
-        name: Lint (python)
-        entry: tox -e lint
+      - id: ruff-format
+        name: Ruff format (python)
+        entry: ruff format --force-exclude
+        language: python
         files: "^(src|tests)"
-        pass_filenames: false
-        types_or: [python]
+        types_or: [python, pyi]
+        require_serial: true
+      - id: ruff-lint
+        name: Ruff lint (python)
+        entry: ruff check --fix --exit-non-zero-on-fix
         language: python
-        additional_dependencies: ["tox~=4.6"]
-      # - id: test
-      #   name: Test (python)
-      #   entry: tox
-      #   always_run: true
-      #   pass_filenames: false
-      #   language: python
-      #   additional_dependencies: ["tox~=4.6"]
-      #   stages: [push]
-      - id: security
-        name: Security check on dependencies (python)
-        entry: tox -e security
-        always_run: true
-        pass_filenames: false
+        files: "^(src|tests)"
+        types_or: [python, pyi]
+        require_serial: true
+      - id: mypy
+        name: Mypy type check (python)
+        entry: mypy
         language: python
-        additional_dependencies: ["tox~=4.6"]
-        stages: [push]
-      - id: docs
-        name: Generate docs (python)
-        entry: tox -e docs
-        always_run: true
-        pass_filenames: false
-        language: python
-        additional_dependencies: ["tox~=4.6"]
-        stages: [push]
+        files: "^src"
+        types_or: [python, pyi]
+        require_serial: true

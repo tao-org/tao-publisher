@@ -1,6 +1,6 @@
 """API client module."""
 
-from typing import Any, Dict, Optional, cast
+from typing import Any, cast
 
 import requests
 
@@ -35,7 +35,7 @@ class APIClient:
         tao.exceptions.ConfigurationError: config url is not set.
     """
 
-    def __init__(self, config: Optional[Config] = None) -> None:
+    def __init__(self, config: Config | None = None) -> None:
         if not config:
             config = Config()
 
@@ -51,7 +51,7 @@ class APIClient:
         """Returns True if API token is set, False otherwise."""
         return self.token is not None
 
-    def login(self, password: str, username: Optional[str] = None) -> str:
+    def login(self, password: str, username: str | None = None) -> str:
         """Login user and retrieve auth token.
 
         Raises:
@@ -82,10 +82,10 @@ class APIClient:
         self,
         method: HttpMethodName,
         api_path: str,
-        params: Optional[Dict[str, str]] = None,
-        data: Optional[Any] = None,  ## noqa: ANN401
-        files: Optional[Any] = None,  ## noqa: ANN401
-    ) -> Dict[str, Any]:
+        params: dict[str, str] | None = None,
+        data: Any | None = None,  ## noqa: ANN401
+        files: Any | None = None,  ## noqa: ANN401
+    ) -> dict[str, Any]:
         """Send request to TAO API.
 
         Raises:

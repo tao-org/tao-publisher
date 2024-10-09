@@ -3,7 +3,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from tao.exceptions import PublishDefinitionError
 from tao.logging import _get_logger
@@ -49,7 +49,7 @@ class PublishAPI(EndpointAPI, endpoint="/docker/register", auth=True):
         self,
         publish_spec: PublishSpec,
         ctx_path: Path,
-    ) -> Tuple[Dict[str, Any], List[Tuple[str, SerializedFile]]]:
+    ) -> tuple[dict[str, Any], list[tuple[str, SerializedFile]]]:
         data = publish_spec.model_dump(
             mode="json",
             by_alias=True,
@@ -58,7 +58,7 @@ class PublishAPI(EndpointAPI, endpoint="/docker/register", auth=True):
         data["containerDescriptor"] = json.dumps(data.pop("container"))
         data["componentDescriptors"] = json.dumps(data.pop("components"))
 
-        files: List[Tuple[str, SerializedFile]] = []
+        files: list[tuple[str, SerializedFile]] = []
 
         if publish_spec.container_logo:
             logo = serialize_file(

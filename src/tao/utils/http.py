@@ -14,13 +14,13 @@ Attributes:
 import mimetypes
 import re
 from pathlib import Path
-from typing import List, Literal, Optional, Tuple
+from typing import Literal
 from urllib.parse import urlparse
 
 HTTP_401_UNAUTHORIZED = 401
 
 HttpMethodName = Literal["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
-SerializedFile = Tuple[str, bytes, str]
+SerializedFile = tuple[str, bytes, str]
 
 
 def is_url(text: str, /) -> bool:
@@ -54,7 +54,7 @@ def slugify(text: str, /) -> str:
     return text
 
 
-def serialize_files(files: List[Path], /, *, ctx_path: Path) -> List[SerializedFile]:
+def serialize_files(files: list[Path], /, *, ctx_path: Path) -> list[SerializedFile]:
     """Prepare files upload by transforming list of path to list of serialized files.
 
     Read each files and return list of `SerializedFile`. This method do not raise an
@@ -66,7 +66,7 @@ def serialize_files(files: List[Path], /, *, ctx_path: Path) -> List[SerializedF
         This method calls `serialize_file` for each file path,
         check it above to learn more!
     """
-    files_data: List[SerializedFile] = []
+    files_data: list[SerializedFile] = []
     for file_path in files:
         file = serialize_file(file_path, ctx_path=ctx_path)
         if file:
@@ -79,7 +79,7 @@ def serialize_file(
     /,
     *,
     ctx_path: Path,
-) -> Optional[SerializedFile]:
+) -> SerializedFile | None:
     """Prepare file upload by reading file and serializing it.
 
     Read file and return a SerializedFile that can be used with

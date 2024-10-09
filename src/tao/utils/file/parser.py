@@ -9,21 +9,22 @@ Currently support parsing for YAML (`.yml`, `.yaml`), and JSON (`.json`).
 """
 
 import json
+from collections.abc import Callable
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any
 
 import yaml
 
 from .exceptions import FileContentError, FileExtensionInvalidError
 
-FileContent = Dict[str, Any]
+FileContent = dict[str, Any]
 ParserFunc = Callable[[Path], FileContent]
 
-_PARSERS: Dict[ParserFunc, List[str]] = {}
+_PARSERS: dict[ParserFunc, list[str]] = {}
 
 
-def get_valid_parsable_extensions() -> List[str]:
+def get_valid_parsable_extensions() -> list[str]:
     """Get all extensions with an existing parser."""
     extensions = set()
     for _extensions in _PARSERS.values():
@@ -31,7 +32,7 @@ def get_valid_parsable_extensions() -> List[str]:
     return list(extensions)
 
 
-def get_parser(file_ext: str, /) -> Optional[ParserFunc]:
+def get_parser(file_ext: str, /) -> ParserFunc | None:
     """Get parser for config files with the corresponding file extension."""
     for parser_func, extensions in _PARSERS.items():
         if file_ext in extensions:
@@ -58,7 +59,7 @@ def parse_file(file_path: Path, /) -> FileContent:
     raise FileExtensionInvalidError(msg)
 
 
-def _register_parser(*, extensions: List[str]) -> Callable[[ParserFunc], ParserFunc]:
+def _register_parser(*, extensions: list[str]) -> Callable[[ParserFunc], ParserFunc]:
     def decorator(parser_func: ParserFunc) -> ParserFunc:
         @wraps(parser_func)
         def wrapper(file_path: Path, /) -> FileContent:
@@ -101,7 +102,7 @@ def _parse_json(file_path: Path, /) -> FileContent:
 
 
 def _parse_content(
-    content: Optional[Union[List[Any], Dict[Any, Any]]],
+    content: list[Any] | dict[Any, Any] | None,
 ) -> FileContent:
     content_dict = {}
     if isinstance(content, dict):

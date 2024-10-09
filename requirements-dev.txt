@@ -1,0 +1,12 @@
+-e .
+bpython==0.24
+build~=1.2
+commitizen==3.29.1
+hatch~=1.12
+mypy~=1.11
+pre-commit~=4.0
+ruff==0.6.9
+tox~=4.21
+# Stubs
+types-PyYAML~=6.0
+types-requests~=2.31

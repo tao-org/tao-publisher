@@ -1,7 +1,7 @@
 """Container-related API module."""
 
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import ValidationError
 
@@ -29,13 +29,13 @@ class ContainerAPI(EndpointAPI, endpoint="/docker", auth=True):
         ASC = "ASC"
         DESC = "DESC"
 
-    def list(  ## noqa: A003
+    def list(
         self,
-        page_number: Optional[int] = None,
-        page_size: Optional[int] = None,
-        sort_by_field: Optional[str] = None,
-        sort_direction: Optional[SortDirection] = None,
-    ) -> List[Container]:
+        page_number: int | None = None,
+        page_size: int | None = None,
+        sort_by_field: str | None = None,
+        sort_direction: SortDirection | None = None,
+    ) -> list[Container]:
         """List toolbox containers registered in TAO.
 
         Raises:
@@ -80,7 +80,7 @@ class ContainerAPI(EndpointAPI, endpoint="/docker", auth=True):
                 schemas could have changed.
         """
         response = self.client.request("GET", self.url(f"/{container_id}"))
-        data: Dict[str, Any] = response.get("data", {})
+        data: dict[str, Any] = response.get("data", {})
         try:
             return Container(**data)
         except TypeError as err:

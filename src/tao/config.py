@@ -2,7 +2,7 @@
 
 from base64 import b64decode, b64encode
 from pathlib import Path
-from typing import Optional, TypedDict, cast
+from typing import TypedDict, cast
 
 import click
 import yaml
@@ -18,9 +18,9 @@ logger = _get_logger()
 
 
 class _ConfigDict(TypedDict):
-    url: Optional[str]
-    user: Optional[str]
-    token: Optional[str]
+    url: str | None
+    user: str | None
+    token: str | None
 
 
 class Config:
@@ -47,11 +47,11 @@ class Config:
 
     def __init__(
         self,
-        file_path: Optional[Path] = None,
+        file_path: Path | None = None,
         load: bool = True,
-        url: Optional[str] = None,
-        user: Optional[str] = None,
-        token: Optional[str] = None,
+        url: str | None = None,
+        user: str | None = None,
+        token: str | None = None,
     ) -> None:
         self._file_path = file_path if file_path else _DEFAULT_CONFIG_FILE_PATH
         self._conf = _ConfigDict(url=None, user=None, token=None)
@@ -98,27 +98,27 @@ class Config:
             yaml.dump(self._conf, file, default_flow_style=False)
 
     @property
-    def url(self) -> Optional[str]:
+    def url(self) -> str | None:
         """TAO API BASE URL."""
         return self._conf["url"]
 
     @url.setter
-    def url(self, val: Optional[str]) -> None:
+    def url(self, val: str | None) -> None:
         """Set config url."""
         self._conf["url"] = val
 
     @property
-    def user(self) -> Optional[str]:
+    def user(self) -> str | None:
         """User."""
         return self._conf["user"]
 
     @user.setter
-    def user(self, val: Optional[str]) -> None:
+    def user(self, val: str | None) -> None:
         """Set config user."""
         self._conf["user"] = val
 
     @property
-    def token(self) -> Optional[str]:
+    def token(self) -> str | None:
         """TAO user auth token."""
         _token = self._conf["token"]
         if _token:
@@ -126,7 +126,7 @@ class Config:
         return _token
 
     @token.setter
-    def token(self, val: Optional[str]) -> None:
+    def token(self, val: str | None) -> None:
         """Save auth informations."""
         if val:
             val = b64encode(val.encode()).decode()

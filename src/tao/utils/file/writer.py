@@ -9,21 +9,22 @@ Currently support writing to YAML (`.yml`, `.yaml`), and JSON (`.json`).
 """
 
 import json
+from collections.abc import Callable
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 import yaml
 
 from .exceptions import FileExtensionInvalidError
 
-FileContent = Dict[str, Any]
+FileContent = dict[str, Any]
 WriterFunc = Callable[[Path, FileContent], None]
 
-_WRITERS: Dict[WriterFunc, List[str]] = {}
+_WRITERS: dict[WriterFunc, list[str]] = {}
 
 
-def get_valid_writable_extensions() -> List[str]:
+def get_valid_writable_extensions() -> list[str]:
     """Get all extensions with an existing writer."""
     extensions = set()
     for _extensions in _WRITERS.values():
@@ -31,7 +32,7 @@ def get_valid_writable_extensions() -> List[str]:
     return list(extensions)
 
 
-def get_writer(file_ext: str, /) -> Optional[WriterFunc]:
+def get_writer(file_ext: str, /) -> WriterFunc | None:
     """Get writer for config files with the corresponding file extension."""
     for writer_func, extensions in _WRITERS.items():
         if file_ext in extensions:
@@ -60,7 +61,7 @@ def write_file(file_path: Path, /, data: FileContent) -> None:
     raise FileExtensionInvalidError(msg)
 
 
-def _register_writer(*, extensions: List[str]) -> Callable[[WriterFunc], WriterFunc]:
+def _register_writer(*, extensions: list[str]) -> Callable[[WriterFunc], WriterFunc]:
     def decorator(writer_func: WriterFunc) -> WriterFunc:
         @wraps(writer_func)
         def wrapper(file_path: Path, /, data: FileContent) -> None:

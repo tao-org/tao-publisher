@@ -1,6 +1,6 @@
 """TAO client/API exceptions."""
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from pydantic import ValidationError
 from requests import HTTPError
@@ -18,7 +18,7 @@ class PublishDefinitionError(RuntimeError):
     def __init__(
         self,
         reason: str = "",
-        validation_error: Optional[ValidationError] = None,
+        validation_error: ValidationError | None = None,
     ) -> None:
         msg = "Publish definition is invalid.\n"
         msg += reason
@@ -52,8 +52,8 @@ class RequestHTTPError(RequestError):
     def __init__(
         self,
         status_code: int,
-        reason: Optional[str] = None,
-        http_error: Optional[HTTPError] = None,
+        reason: str | None = None,
+        http_error: HTTPError | None = None,
     ) -> None:
         if status_code == HTTP_401_UNAUTHORIZED:
             _msg = "Authentication failed.\n"
@@ -68,7 +68,7 @@ class RequestHTTPError(RequestError):
 class RequestResponseStatusError(RequestError):
     """Request response status error."""
 
-    def __init__(self, response_json: Dict[str, Any]) -> None:
+    def __init__(self, response_json: dict[str, Any]) -> None:
         status = response_json.get("status", "UNKNOWN")
         msg = response_json.get("message", f"Request status: {status}")
         super().__init__(msg)

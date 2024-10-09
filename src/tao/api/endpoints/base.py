@@ -1,7 +1,5 @@
 """Base API endpoint class."""
 
-from typing import Optional
-
 from tao.api.client import APIClient
 from tao.exceptions import ConfigurationError
 
@@ -29,12 +27,12 @@ class EndpointAPI:
         Declaration of a simple endpoint:
 
         >>> class TestAPI(EndpointAPI, endpoint="/test"):
-        ...    pass
+        ...     pass
 
         Declaration of an endpoint with authentication required:
 
         >>> class AuthTestAPI(EndpointAPI, endpoint="/test", auth=True):
-        ...    pass
+        ...     pass
 
         When config is empty you can't instantiate because config url needs
         to be defined.
@@ -73,7 +71,7 @@ class EndpointAPI:
     __endpoint__ = "/"
     __auth__ = True
 
-    def __init__(self, client: Optional[APIClient] = None) -> None:
+    def __init__(self, client: APIClient | None = None) -> None:
         if not client:  # pragma: no cover
             client = APIClient()
 
@@ -121,7 +119,7 @@ class EndpointAPI:
             No auth required
 
             >>> class TestAPI(EndpointAPI, auth=False):
-            ...    pass
+            ...     pass
             >>> api = TestAPI(client)
             >>> api.is_auth_required()
             False
@@ -129,7 +127,7 @@ class EndpointAPI:
             Auth required
 
             >>> class TestAPI(EndpointAPI, auth=True):
-            ...    pass
+            ...     pass
             >>> api = TestAPI(client)
             >>> api.is_auth_required()
             True
@@ -149,7 +147,7 @@ class EndpointAPI:
             .url(...) example
 
             >>> class TestAPI(EndpointAPI, endpoint="/test"):
-            ...    pass
+            ...     pass
             >>> api = TestAPI(client)
             >>> api.url("/something")
             '/test/something'

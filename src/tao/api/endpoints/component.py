@@ -1,7 +1,7 @@
 """Component-related API module."""
 
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import ValidationError
 
@@ -29,13 +29,13 @@ class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):
         ASC = "ASC"
         DESC = "DESC"
 
-    def list(  ## noqa: A003
+    def list(
         self,
-        page_number: Optional[int] = None,
-        page_size: Optional[int] = None,
-        sort_by: Optional[str] = None,
-        sort_direction: Optional[SortDirection] = None,
-    ) -> List[Component]:
+        page_number: int | None = None,
+        page_size: int | None = None,
+        sort_by: str | None = None,
+        sort_direction: SortDirection | None = None,
+    ) -> list[Component]:
         """List processing components registered in TAO.
 
         Raises:
@@ -82,9 +82,9 @@ class ComponentAPI(EndpointAPI, endpoint="/component", auth=True):
         response = self.client.request(
             "GET",
             self.url(f"/{component_id}"),
-            params={"id": component_id},  # TODO: remove id param when API is fixed
+            params={"id": component_id},
         )
-        data: Dict[str, Any] = response.get("data", {})
+        data: dict[str, Any] = response.get("data", {})
         try:
             return ComponentDescriptor(**data)
         except TypeError as err:

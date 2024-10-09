@@ -10,7 +10,7 @@ Note:
 """
 
 from pathlib import Path
-from typing import List, Literal, Optional, Union
+from typing import Literal
 
 from pydantic import AliasChoices, BaseModel, Field, field_validator
 from typing_extensions import TypedDict
@@ -36,10 +36,10 @@ class DataDescriptor(BaseModel):
         "FOLDER",
         "JSON",
     ] = Field(alias="formatType", default="RASTER")
-    format_name: Optional[str] = Field(alias="formatName", default=None)
-    geometry: Optional[str] = Field(default=None)
-    crs: Optional[str] = Field(default=None)
-    sensor_type: Optional[
+    format_name: str | None = Field(alias="formatName", default=None)
+    geometry: str | None = Field(default=None)
+    crs: str | None = Field(default=None)
+    sensor_type: (
         Literal[
             "OPTICAL",
             "RADAR",
@@ -48,25 +48,26 @@ class DataDescriptor(BaseModel):
             "UNKNOWN",
             "PASSIVE_MICROWAVE",
         ]
-    ] = Field(alias="sensorType", default=None)
-    dimension: Optional[_Dimension] = Field(default=None)
-    location: Optional[Path] = Field(default=None)
+        | None
+    ) = Field(alias="sensorType", default=None)
+    dimension: _Dimension | None = Field(default=None)
+    location: Path | None = Field(default=None)
 
 
 class SourceDescriptor(BaseModel):
     """Component source descriptor."""
 
-    id_: Optional[str] = Field(alias="id", default=None)
+    id_: str | None = Field(alias="id", default=None)
     parent_id: str = Field(alias="parentId")
     name: str
     data_descriptor: DataDescriptor = Field(alias="dataDescriptor")
-    constraints: Optional[List[str]] = Field(default=None)
+    constraints: list[str] | None = Field(default=None)
     cardinality: int = Field(
         default=-1,
         ge=-1,
         description="-1 = none, 0 = list, >0 = exact number of items",
     )
-    referenced_source_descriptor_id: Optional[str] = Field(
+    referenced_source_descriptor_id: str | None = Field(
         alias="referencedSourceDescriptorId",
         default=None,
     )
@@ -75,17 +76,17 @@ class SourceDescriptor(BaseModel):
 class TargetDescriptor(BaseModel):
     """Component target descriptor."""
 
-    id_: Optional[str] = Field(alias="id", default=None)
+    id_: str | None = Field(alias="id", default=None)
     parent_id: str = Field(alias="parentId")
     name: str
     data_descriptor: DataDescriptor = Field(alias="dataDescriptor")
-    constraints: Optional[List[str]] = Field(default=None)
+    constraints: list[str] | None = Field(default=None)
     cardinality: int = Field(
         default=0,
         ge=0,
         description="0 = list, >0 = exact number of items, usually 1",
     )
-    referenced_target_descriptor_id: Optional[str] = Field(
+    referenced_target_descriptor_id: str | None = Field(
         alias="referencedTargetDescriptorId",
         default=None,
     )
@@ -98,18 +99,20 @@ class ParameterDescriptor(BaseModel):
     type_: Literal["REGULAR", "TEMPLATE"] = Field(
         alias="type",
         default="REGULAR",
-        description="REGULAR = simple value, TEMPLATE = composed value, like an XML or JSON.",
+        description="REGULAR = simple value, TEMPLATE = composed value, "
+        "like an XML or JSON.",
     )
     data_type: str = Field(
         alias="dataType",
-        description="If polygon, should be WKT. If date, the format is in 'format' property.",
+        description="If polygon, should be WKT, else if date, "
+        "the format is in 'format' property.",
     )
-    default_value: Optional[str] = Field(alias="defaultValue", default=None)
+    default_value: str | None = Field(alias="defaultValue", default=None)
     description: str
     label: str = Field(description="parameter_label, as used in command line")
-    unit: Optional[str] = Field(default=None)
-    value_set: Optional[List[str]] = Field(alias="valueSet", default=None)
-    format_: Optional[str] = Field(alias="format", default=None)
+    unit: str | None = Field(default=None)
+    value_set: list[str] | None = Field(alias="valueSet", default=None)
+    format_: str | None = Field(alias="format", default=None)
     not_null: bool = Field(
         alias="notNull",
         default=True,
@@ -140,7 +143,7 @@ class ParameterDescriptor(BaseModel):
 
     @field_validator("default_value", mode="before")
     @classmethod
-    def _default_value_transform(cls, val: Union[float, str]) -> Optional[str]:
+    def _default_value_transform(cls, val: float | str) -> str | None:
         return str(val) if val is not None else None
 
 
@@ -154,7 +157,7 @@ class Component(BaseModel):
     authors: str = Field(default="")
     copyright_: str = Field(alias="copyright", default="")
     node_affinity: str = Field(alias="nodeAffinity", default="Any")
-    container_id: Optional[str] = Field(alias="containerId", default=None)
+    container_id: str | None = Field(alias="containerId", default=None)
     visibility: Literal["SYSTEM", "USER", "CONTRIBUTOR"] = Field(default="USER")
     active: bool = Field(default=True)
     component_type: Literal[
@@ -176,14 +179,14 @@ class Component(BaseModel):
             "if false, it is the executable that knows how to create it."
         ),
     )
-    tags: Optional[List[str]] = Field(default=None)
+    tags: list[str] | None = Field(default=None)
 
 
 class ComponentDescriptor(Component):
     """Component descriptor for publish and component as returned by get endpoint."""
 
-    sources: List[SourceDescriptor] = Field(default_factory=list)
-    targets: List[TargetDescriptor] = Field(default_factory=list)
+    sources: list[SourceDescriptor] = Field(default_factory=list)
+    targets: list[TargetDescriptor] = Field(default_factory=list)
     file_location: Path = Field(alias="fileLocation")
     working_directory: Path = Field(alias="workingDirectory")
     template_type: Literal["VELOCITY", "JAVASCRIPT", "XSLT", "JSON"] = Field(
@@ -191,12 +194,12 @@ class ComponentDescriptor(Component):
         default="VELOCITY",
         description="for executables is VELOCITY",
     )
-    variables: Optional[List[_Variable]] = Field(default=None)
+    variables: list[_Variable] | None = Field(default=None)
     multi_thread: bool = Field(alias="multiThread", default=False)
-    parallelism: Optional[int] = Field(default=None, gt=0)
-    owner: Optional[str] = Field(default=None)
-    transient: Optional[bool] = Field(default=None)
-    parameter_descriptors: List[ParameterDescriptor] = Field(
+    parallelism: int | None = Field(default=None, gt=0)
+    owner: str | None = Field(default=None)
+    transient: bool | None = Field(default=None)
+    parameter_descriptors: list[ParameterDescriptor] = Field(
         alias="parameterDescriptors",
     )
     template_contents: str = Field(

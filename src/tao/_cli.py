@@ -1,9 +1,10 @@
 """Command-line interface."""
 
 import sys
+from collections.abc import Sequence
 from importlib.metadata import metadata
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, Union
+from typing import Any
 
 import click
 from pydantic import BaseModel
@@ -55,7 +56,7 @@ CONTEXT_API = "api"
 @click.pass_context
 def main(
     ctx: click.Context,
-    config_path: Optional[Path],
+    config_path: Path | None,
     verbose: int,
     quiet: bool,
 ) -> None:
@@ -89,8 +90,8 @@ def version() -> None:
 @click.pass_context
 def configure(
     ctx: click.Context,
-    api_url: Optional[str],
-    username: Optional[str],
+    api_url: str | None,
+    username: str | None,
 ) -> None:
     """Configure client/CLI."""
     config: Config = ctx.obj[CONTEXT_CONFIG]
@@ -120,7 +121,7 @@ def configure(
 @click.option("-u", "--username", type=str, help="Account username.")
 @click.option("-p", "--password", type=str, help="Account password.")
 @click.pass_context
-def login(ctx: click.Context, username: Optional[str], password: Optional[str]) -> None:
+def login(ctx: click.Context, username: str | None, password: str | None) -> None:
     """Authenticate with API."""
     config: Config = ctx.obj[CONTEXT_CONFIG]
     try:
@@ -246,7 +247,7 @@ def container(ctx: click.Context) -> None:
 @click.pass_context
 def container_delete(
     ctx: click.Context,
-    container_id: Tuple[str, ...],
+    container_id: tuple[str, ...],
     yes: bool,
     ignore: bool,
 ) -> None:
@@ -292,7 +293,7 @@ def container_delete(
 @click.pass_context
 def container_get(
     ctx: click.Context,
-    container_id: Tuple[str, ...],
+    container_id: tuple[str, ...],
     json_format: bool,
     clean: bool,
     logo: bool,
@@ -358,9 +359,9 @@ def container_get(
 @click.pass_context
 def container_list(
     ctx: click.Context,
-    sort: Optional[str],
-    sort_field: Optional[str],
-    page: Optional[int],
+    sort: str | None,
+    sort_field: str | None,
+    page: int | None,
     page_size: int,
     json_format: bool,
     clean: bool,
@@ -415,7 +416,7 @@ def component(ctx: click.Context) -> None:
 @click.pass_context
 def component_delete(
     ctx: click.Context,
-    component_id: Tuple[str, ...],
+    component_id: tuple[str, ...],
     yes: bool,
     ignore: bool,
 ) -> None:
@@ -457,7 +458,7 @@ def component_delete(
 @click.pass_context
 def component_get(
     ctx: click.Context,
-    component_id: Tuple[str, ...],
+    component_id: tuple[str, ...],
     json_format: bool,
     clean: bool,
 ) -> None:
@@ -520,9 +521,9 @@ def component_get(
 @click.pass_context
 def component_list(
     ctx: click.Context,
-    sort: Optional[str],
-    sort_field: Optional[str],
-    page: Optional[int],
+    sort: str | None,
+    sort_field: str | None,
+    page: int | None,
     page_size: int,
     json_format: bool,
     clean: bool,
@@ -554,7 +555,7 @@ def component_list(
 
 
 def _display_containers(
-    containers: List[Container],
+    containers: list[Container],
     applications: bool,
     logo: bool,
     json_format: bool,
@@ -576,7 +577,7 @@ def _display_containers(
 
 
 def _display_components(
-    components: Sequence[Union[Component, ComponentDescriptor]],
+    components: Sequence[Component | ComponentDescriptor],
     json_format: bool,
     clean: bool,
 ) -> None:
@@ -598,8 +599,8 @@ def _display_components(
 def _display_models(
     models: Sequence[BaseModel],
     label_prop: str,
-    exclude_set: Set[str],
-    children: List[str],
+    exclude_set: set[str],
+    children: list[str],
     json_format: bool = False,
     clean: bool = False,
 ) -> None:
@@ -633,10 +634,10 @@ def _display_models(
 
 
 def _display(
-    data: Union[List[Dict[str, Any]], Dict[str, Any]],
+    data: list[dict[str, Any]] | dict[str, Any],
     *,
-    children: Optional[List[str]] = None,
-    title: Optional[str] = None,
+    children: list[str] | None = None,
+    title: str | None = None,
     indent_level: int = 1,
 ) -> None:
     if not children:

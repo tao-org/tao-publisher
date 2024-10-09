@@ -11,31 +11,31 @@ PRE_COMMIT=$(PYTHON) -mpre_commit
 
 # ======================================================= #
 
-default: pipeline
+default: help
 
-release: ## Bump version, create tag and update CHANGELOG.
-	@$(PYTHON) -mcommitizen bump --yes $(VERSION)
+release: ## Bump version, create tag and update `CHANGELOG.md`.
+	@$(PYTHON) -m commitizen bump --yes --changelog
 
 build: ## Build wheel and tar.gz in 'dist/'.
-	@$(PYTHON) -mbuild
+	@$(PYTHON) -m build
 
 install: ## Install in the current python env.
 	@$(PIP) install .
 
 install-dev: ## Install in editable mode inside the current python env with dev dependencies.
-	@$(PIP) install -e .[dev]
+	@$(PIP) install -r requirements-dev.txt
 
 shell: ## Open Python shell.
-	@$(PYTHON) -mbpython
+	@$(PYTHON) -m bpython
 
 test: ## Invoke pytest to run automated tests.
 	@$(TOX)
 
 lint: ## Lint python source code.
-	@$(PRE_COMMIT) run --files $(shell find src -name "*.py")
+	@$(PRE_COMMIT) run --files $(shell find src tests -name "*.py")
 
-lint-watch: ## Run ruff linter with --watch (ruff needs to be installed)
-	@$(PYTHON) -mruff check src --watch
+lint-watch: ## Run ruff linter with --watch (ruff needs to be installed).
+	@$(PYTHON) -m ruff check src --fix --watch
 
 docs: ## Build the docs.
 	@$(TOX) -e $@
@@ -47,15 +47,13 @@ security: ## Security check on project dependencies.
 	@$(TOX) -e $@
 
 report: ## Start http server to serve the test report and coverage.
-	@printf "# ---------------------------------------------\n"
 	@printf "Test report: http://localhost:9000\n"
 	@printf "Coverage report: http://localhost:9000/coverage\n"
-	@$(PYTHON) -mhttp.server -b 0.0.0.0 -d tests-reports 9000 > /dev/null
+	@$(PYTHON) -m http.server -b 0.0.0.0 -d tests-reports 9000 > /dev/null
 
 serve: ## Start http server to serve the docs.
-	@printf "# ---------------------------------------------\n"
 	@printf "Docs: http://localhost:8000\n"
-	@$(PYTHON) -mhttp.server -b 0.0.0.0 -d docs/build/html 8000 > /dev/null
+	@$(PYTHON) -m http.server -b 0.0.0.0 -d docs/build/html 8000 > /dev/null
 
 clean: ## Clean temporary files, like python __pycache__, dist build, docs output, tests reports.
 	@find src tests -regex "^.*\(__pycache__\|\.py[co]\)$$" -delete

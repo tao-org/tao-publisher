@@ -7,13 +7,11 @@ and other operations. The goal is _not_ to rewrite python standard libraries lik
 Only features with added value will be implemented here.
 """
 
-from typing import List
-
 from .parser import get_parser, get_valid_parsable_extensions, parse_file
 from .writer import get_valid_writable_extensions, get_writer, write_file
 
 
-def get_valid_extensions() -> List[str]:
+def get_valid_extensions() -> list[str]:
     """Get all extensions with existing parser and writer."""
     parsable_extensions = get_valid_parsable_extensions()
     writable_extensions = get_valid_writable_extensions()

@@ -6,9 +6,7 @@ is needed to encapsulate and validate the data of the register endpoint. It is u
 to parse a specification file.
 """
 
-
 from pathlib import Path
-from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -26,11 +24,11 @@ class PublishSpec(BaseModel):
     name: str = Field(default="")
     description: str = Field(default="")
     system: bool = Field(default=True)
-    container_logo: Optional[Path] = Field(alias="containerLogo", default=None)
+    container_logo: Path | None = Field(alias="containerLogo", default=None)
     container: ContainerDescriptor
-    components: List[ComponentDescriptor] = Field(default_factory=list)
-    docker_files: List[Path] = Field(alias="dockerFiles", default_factory=list)
-    auxiliary_files: List[Path] = Field(
+    components: list[ComponentDescriptor] = Field(default_factory=list)
+    docker_files: list[Path] = Field(alias="dockerFiles", default_factory=list)
+    auxiliary_files: list[Path] = Field(
         alias="auxiliaryFiles",
         default_factory=list,
     )
