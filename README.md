@@ -1,20 +1,21 @@
 # TAO Publisher
+<!-- --8<-- [start:overview-header] -->
 
+![License](https://img.shields.io/badge/license-Apache--2.0-yellow?style=flat-square)
 [![Language](https://img.shields.io/badge/language-Python-3776ab?style=flat-square&logo=Python)](https://www.python.org/)
 [![Documentation](https://img.shields.io/badge/documentation-mkdocs-0a507a?style=flat-square)](https://www.mkdocs.org/)
-[![Style](https://img.shields.io/badge/style-black-9a9a9a?style=flat-square)](https://black.readthedocs.io/en/stable/)
-[![Lint](https://img.shields.io/badge/lint-ruff,%20mypy-brightgreen?style=flat-square)](.)
-[![Security](https://img.shields.io/badge/security-bandit,%20safety-purple?style=flat-square)](.)
-[![Stability](https://img.shields.io/badge/stability-experimental-orange?style=flat-square)](.)
+![Style](https://img.shields.io/badge/style-ruff-9a9a9a?style=flat-square)
+![Lint](https://img.shields.io/badge/lint-ruff,%20mypy-brightgreen?style=flat-square)
+![Security](https://img.shields.io/badge/security-bandit,%20pip%20audit-purple?style=flat-square)
 
-[Merge Request](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/merge_requests) **·**
-[Bug Report](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues/new?issuable_template=bug_report) **·**
-[Feature Request](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues/new?issuable_template=feature_request)
+[Pull Request](https://github.com/csgroup-oss/tao-publisher/pulls) **·**
+[Bug Report](https://github.com/csgroup-oss/tao-publisher/issues/new?template=bug_report.md) **·**
+[Feature Request](https://github.com/csgroup-oss/tao-publisher/issues/new?template=feature_request.md)
 
------
+The TAO Publisher is a client developed for [TAO](https://hub.eoafrica-dunia.org/ui/sap.html)
+that provides an easy publishing interface with the service through a Python API / CLI.
 
-The TAO Publisher is a tool developed to provide an easy publishing interface with [TAO](https://hub.eoafrica-dunia.org/ui/sap.html) through a Python API / CLI.
-
+<!-- --8<-- [end:overview-header] -->
 ## Table of Contents
 
 - [Getting started](#getting-started)
@@ -22,7 +23,10 @@ The TAO Publisher is a tool developed to provide an easy publishing interface wi
   - [Usage](#usage)
     - [Configuration](#configuration)
     - [Publishing](#publishing)
+- [Contributing](#contributing)
+- [License](#license)
 
+<!-- --8<-- [start:overview-content] -->
 ## Getting started
 
 ### Installation
@@ -31,24 +35,21 @@ The TAO Publisher is a tool developed to provide an easy publishing interface wi
 This project can be installed from its source code.
 
 ```bash
-pip install git+https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher
+pip install git+https://github.com/csgroup-oss/tao-publisher.git
 ```
 
-You can use `git+https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher@<tag>`
+You can use `git+https://github.com/csgroup-oss/tao-publisher.git@<tag>`
 to install a specific version.
 
 You can also clone the repo and install from it locally:
 
 ```bash
-git clone https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher
+git clone https://github.com/csgroup-oss/tao-publisher.git
 cd tao-publisher
 pip install .
 ```
 
-!!! note "Virtualenvs"
-    The use of a virtual environment is greatly recommended.
-    You can also use [pipx](https://pypa.github.io/pipx/), a great tool that isolate the package
-    and its dependencies in a virtualenv and expose only its scripts/entrypoints (_/bin_) like CLIs.
+The use of a virtual environment is greatly recommended.
 
 <!-- --8<-- [end:install] -->
 ### Usage
@@ -101,8 +102,16 @@ we will call it the **publish file**. This file is used to declare a container,
 as well as the components linked to it. Declaring components is complex and tricky,
 for our first publication we will only publish a container.
 
-Check our _How-to_ guides to learn about component publication.
-
-// TODO
-
 <!-- --8<-- [end:publish] -->
+<!-- --8<-- [end:overview-content] -->
+## Contributing
+
+If you want to contribute to this project or understand how it works,
+please check [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Any contribution is greatly appreciated.
+
+## License
+
+Distributed under the Apache-2.0 License. See [LICENSE](LICENSE) for more
+information.

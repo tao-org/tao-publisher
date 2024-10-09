@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for wanting to contribute to this project!
+First off, thanks for taking the time to contribute! 🎉
 
 The following elements will allow you to contribute with a little guide
 to learn how to make an approved contribution. Don't hesitate to share
@@ -14,27 +14,17 @@ some new ideas to improve it!
   - [Environment setup](#environment-setup)
 - [How to contribute?](#how-to-contribute)
   - [Organization](#organization)
-    - [Report issues](#report-issues)
-    - [Work on issues](#work-on-issues)
-    - [Merge Requests](#merge-requests)
-    - [Release](#release)
+    - [Reporting Issues](#reporting-issues)
+    - [Suggesting Enhancements](#suggesting-enhancements)
+    - [Submitting Pull Requests](#submitting-pull-requests)
   - [Writing code](#writing-code)
     - [References](#references)
     - [Quality Assurance](#quality-assurance)
-      - [Development method](#development-method)
       - [Lint](#lint)
       - [Tests](#tests)
       - [Security](#security)
       - [Documentation](#documentation)
-  - [Git](#git)
-    - [Ignore](#ignore)
-    - [Hooks](#hooks)
-    - [Pull](#pull)
-    - [Branches](#branches)
-    - [Commit](#commit)
-      - [Types](#types)
-      - [Scopes](#scopes)
-      - [Subject](#subject)
+    - [Release](#release)
 
 ## Getting started
 
@@ -51,7 +41,7 @@ tools on your system:
 ### Clone the repository
 
 ```bash
-git clone git@gitlab.si.c-s.fr:space_platforms/dunia/tao-publisher.git
+git clone https://github.com/csgroup-oss/tao-publisher
 ```
 
 ### Environment setup
@@ -59,11 +49,11 @@ git clone git@gitlab.si.c-s.fr:space_platforms/dunia/tao-publisher.git
 First, create an isolated Python virtual environment:
 
 ```bash
-virtualenv -p $(which python3) .venv
+virtualenv -p python3.10 .venv
 source .venv/bin/activate
 pip install --upgrade pip
 # OR
-python3 -mvenv --upgrade-deps .venv
+python3.10 -m venv --upgrade-deps .venv
 source .venv/bin/activate
 ```
 
@@ -73,7 +63,7 @@ List available commands:
 make help
 ```
 
-In order to develop in the best conditions, you must install in editable mode.
+You must also install in editable mode, with dev dependencies.
 
 ```bash
 make install-dev
@@ -81,66 +71,73 @@ make install-dev
 
 This project uses multiple tools for its development, and your virtual
 environment created earlier is just here to give you a working
-development environment. Most tools are handled in sub-virtual
+development environment. Some tools are handled in sub-virtual
 environments created by [Tox](https://tox.wiki), a virtual env manager
 and automation tool. The `install-dev` only gives you the tools that you
 will be directly using, delegating other installations inside of *Tox*
 virtual envs.
 
 In order to complete the environment setup, you must install some Git
-Hooks. You can refer to the dedicated section of this document:
-[Hooks](#hooks).
+Hooks.
+
+```bash
+pre-commit install --install-hooks
+```
 
 ## How to contribute?
 
 ### Organization
 
-#### Report issues
+#### Reporting Issues
 
-Traceability is necessary for a healthy development environment. Each
-bug encountered must be reported with the creation of an issue. Details
-on how to reproduce it must be provided, and if possible visuals
-(screenshots) are welcome.
+Issue tracker: <https://github.com/csgroup-oss/tao-publisher/issues>
 
-There are two kinds of issue:
+If you find a bug, please create an issue in the issue tracker and
+provide the following information:
 
-- [Bug Report](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues/new?issuable_template=bug_report)
-- [Feature Request](https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues/new?issuable_template=feature_request)
+- **Description**: Provide a clear and concise description of the problem.
+- **Steps to Reproduce**: List the steps to reproduce the problem.
+- **Expected Behavior**: Describe what you expected to happen.
+- **Actual Behavior**: Describe what actually happened.
+- **Screenshots**: If applicable, add screenshots to help explain your problem.
+- **Environment**: Provide information about your environment, such as
+  your operating system and version, and the version of the project you are using.
 
-Click on these links to visit the issue creation page, with a simple
-template to guide you.
+#### Suggesting Enhancements
 
-Please, remember that a title isn't enough for an issue.
+If you have an idea to improve the project, we would love to hear it!
+Please create an issue and provide the following information:
 
-#### Work on issues
+- **Description**: Provide a clear and concise description of the enhancement.
+- **Rationale**: Explain why this enhancement would be useful.
+- **Implementation**: If possible, describe how you would implement the enhancement.
 
-You can work on every open issue. Keep in mind to reference them in your
-commits and merge requests, by following the [GitLab docs](https://docs.gitlab.com/ee/user/project/issues/crosslinking_issues.html).
+#### Submitting Pull Requests
 
-You must work on a separate branch for each issue. Check out
-the [branch naming convention](#branches).
+1. **Fork the Repository**: Create a fork of the repository by clicking the
+   "Fork" button on the repository page.
+2. **Clone the Fork**: Clone your fork to your local machine.
 
-#### Merge Requests
+   ```shell
+   git clone https://github.com/csgroup-oss/tao-publisher.git
+   cd tao-publisher
+   python3 -mvenv .venv
+   source .venv/bin/activate
+   make install-dev
+   pre-commit install --install-hooks
+   git checkout -b (fix-or-feat)/your-topic-name
+   ```
 
-Please follow these guidelines:
+3. **Commit changes**: Commit your changes with a clear and concise commit message.
+4. **Push changes**: Push your changes to your fork
 
-- Use a clear and descriptive title.
-- Include every relevant issue number in the body, not in the title.
-- Give a complete description of every change made in the body.
+   ```shell
+   git push origin (fix-or-feat)/your-topic-name
+   ```
 
-If a branch is merged and no longer needed, make sure it was closed.
-
-#### Release
-
-You can create a release with `make release`. Because we follow a
-[commit convention](#commit), the next version is guessed from
-the commit history. The CHANGELOG is generated automatically too.
-
-Don't forget to push the tags to your origin repo!
-
-```bash
-git push --tags
-```
+5. **Create a Pull Request**: Create a pull request from your fork's branch to the
+   main repository's main branch. Provide a clear and concise description of your
+   changes and the problem they address.
 
 ### Writing code
 
@@ -180,23 +177,6 @@ formatting tools, and how to use tests.
 
 #### Quality Assurance
 
-##### Development method
-
-The favored method of development will be TDD (Test Driven Development).
-
-The TDD process can be explained like this:
-
-1. Add a test.
-2. Run all tests. The new test should fail for expected reasons
-    (failing by compilation error doesn't count as true failing, you
-    must be able to compile your code).
-3. Write the simplest code that passes the new test.
-4. All tests should now pass.
-5. Refactor as needed, using tests after each refactors to ensure that
-    functionality is preserved
-
-Repeat...
-
 ##### Lint
 
 To ensure good code writing, we use a lot of lint tools:
@@ -205,8 +185,7 @@ To ensure good code writing, we use a lot of lint tools:
     command line tool and Python library for validating
     `pyproject.toml`, includes models defined for `PEP 517`, `PEP 518`
     and `PEP 621`.
-- [black](https://black.readthedocs.io): code formatter
-- [ruff](https://beta.ruff.rs): an extremely fast Python linter,
+- [ruff](https://docs.astral.sh/ruff/): an extremely fast Python linter and formatter,
     written in Rust. Integrate `pyupgrade`, `pylint`, `bandit`, `isort`,
     `eradicate`, and `flake8` with dozens of its plugins.
 - [mypy](https://mypy.readthedocs.io): static type checker.
@@ -225,12 +204,7 @@ is really useful as it gives you instantaneous feedback on your code.
 
 ##### Tests
 
-We shall always aim for the highest code coverage in our tests, and our
-development environment should use tools that will help us ensure it.
-
-The test frameworks used are unittest and pytest, run with tox. Thanks
-to pytest-cov, code coverage is evaluated and fails under 90% of test
-coverage.
+The test frameworks used are unittest and pytest, run with tox.
 
 Run the tests with *make*:
 
@@ -238,19 +212,15 @@ Run the tests with *make*:
 make test
 ```
 
-> Note: Tests are run before each push, failing the push if it fails.
-
 ##### Security
 
-We use [safety](https://pypi.org/project/safety) to check our Python
+We use [pip-audit](https://pypi.org/project/pip-audit/) to check our Python
 dependencies for potential security vulnerabilities and suggests the
-proper remediations for vulnerabilities detected.
+proper remediation for vulnerabilities detected.
 
 ```bash
 make security
 ```
-
-> Note: Security check is run before each push, failing the push if it fails.
 
 ##### Documentation
 
@@ -258,7 +228,7 @@ Doing features is great, but it is useless if nobody knows how to use
 them. Keeping a clean, up-to-date documentation is of high priority.
 
 This project is documented with [MkDocs](https://www.mkdocs.org/).
-The documentation source can be found in the `docs/source` folder.
+The documentation source can be found in the `docs/src` folder.
 
 You can build the docs with:
 
@@ -280,222 +250,15 @@ docs.
 make docs-live
 ```
 
-### Git
+#### Release
 
-#### Ignore
+You can create a release with `make release`. Because we follow a
+[Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/),
+the next version can be guessed from the commit history.
+The `CHANGELOG.md` is generated automatically too.
 
-When you want to hide something from Git's all-seeing eyes, don't
-stubbornly use the `.gitignore` file. There are three native ways in Git
-to ignore files/folders:
-
-1. `.gitignore`: Patterns that should be version-controlled and
-    distributed to other repositories via clone (i.e., files that all
-    developers will want to ignore), to put it bluntly, non-tracked
-    files generated by the project lifecycle can be put here.
-2. `.git/info/exclude`: Patterns that are specific to a particular
-    repository but which do not need to be shared with other related
-    repositories (e.g., auxiliary files that live inside the repository
-    but are specific to one user's workflow).
-3. Patterns which a user wants Git to ignore in all situations (e.g.,
-    backup or temporary files generated by the user's editor of choice)
-    generally go into a file specified by `core.excludesFile` in the
-    user's `~/.gitconfig`.
-
-More details in the full *official* documentation of Git
-[here](https://git-scm.com/docs/gitignore).
-
-To summarize, don't write in the `.gitignore` files generated by your
-workflow if it is not common to all developers on the project. To serve
-that purpose, mandatory tools must be specified in this section.
-
-*There is no mandatory IDE/tool at the moment.*
-
-#### Hooks
-
-We use [Pre-commit](https://pre-commit.com/) to run tools at specific
-moments of the Git workflow, with [Git Hooks](https://git-scm.com/docs/githooks).
-It will mostly run linting and formatting tools on the source code in our case.
-Some tools will also run for yaml, json, or markdown files etc... The commitizen
-tool will also enforce conventional commit usage, that will ne discussed in
-the [Commit](#commit) section.
-
-To activate our Git Hooks, please run the following commands:
+Don't forget to push the tags to your origin repo!
 
 ```bash
-pre-commit install --install-hooks
-```
-
-Our hooks needs the following dependencies:
-
-- Python (>=3.8), Go (>=1.19), pre-commit (~=3.3)
-
-#### Pull
-
-It is good practice to pull with rebase over a normal pull.
-
-```bash
-git switch <your-branch>
-
-# classic
-git pull
-
-# much better
-git pull --rebase
-```
-
-But do keep in mind that to be able to rebase, you'll need to have a
-clean state of your repository, with no changes to commit. If that's not
-the case, you can use `stash` in addition:
-
-```bash
-git switch <your-branch>
-git stash
-git pull --rebase
-git stash pop
-```
-
-If you don't want to specify `--rebase` each time you pull, configure it:
-
-```bash
-git config --local pull.rebase true
-```
-
-And if you don't want to manually `stash` at each rebase, you can also
-configure it:
-
-```bash
-git config --local rebase.autostash true
-```
-
-Now each `git pull` will use `--rebase` and automatically `stash`!
-
-#### Branches
-
-Here's our branch naming convention:
-
-- Immutable branches:
-  - `master`: our main branch, must have no error.
-  - `develop`: branch used to work, where you merge your work
-        branches.
-- Work branches:
-  - `<scope>/<short-name>`: you work here.
-
-List of scopes:
-
-- **fix**: fix a bug
-- **feat**: add a feature
-- **docs**: documentation changes
-- **refactor**: code refactoring
-
-Those are examples, if you come up with other scopes, you can use them.
-You can also use a scope from our commit convention as a branch scope.
-
-We will prefer the use of "-" over "\_".
-
-Example:
-
-```bash
-git checkout -b fix/sanitize-paths
-```
-
-Don't forget to delete your local branches when you don't need them
-anymore.
-
-```bash
-git branch -d <branch-name>
-```
-
-To keep your local refs to remote branches clean, use:
-
-```bash
-git remote prune origin
-```
-
-Here's one process that you can follow once your local branch was
-pushed, successfully merged into `master`, and if you don't need it
-anymore:
-
-```bash
-git switch master
-git pull
-git branch -d <my-branch>
-git remote prune origin
-```
-
-You can also use a scope from our commit convention as a branch scope.
-
-#### Commit
-
-Based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-
-Summary :
-
-```text
-<type>(<scope>): <subject>
-```
-
-The scope is optional, you can find a simpler form:
-
-```text
-<type>: <subject>
-```
-
-In order to be concise, type and scope should not be longer than 10
-characters. Limit the first line to 70 characters or less.
-
-##### Types
-
-- **build:** Changes that affects the build system or external
-  dependencies, such as adding a dependency, or modifying the build
-  system.
-- **ci:** Changes in CI.
-- **chore:** Changes which does not modify the code sources nor the tests.
-- **docs:** Addition or modification of documentation/comment.
-- **style:** Changes that does not affect the sense/meaning of the
-  code (space, formatting, semicolon, newline, etc ...).
-- **typo:** Correction of a typographical problem in the code
-  (example: correction of a spelling error in a string).
-- **refactor:** Code change that doesn't fix a bug or add a feature.
-- **perf:** Code change that improves performance.
-- **feat:** Adding or modifying a feature.
-- **fix:** Bug fix.
-- **test:** Addition of missing tests or correction of existing tests.
-- **revert:** Rollback changes from a previous commit.
-
-##### Scopes
-
-This part is optional, it can be used to define more precisely what is
-impacted. Examples:
-
-```text
-build(wheel): add x to the wheel
-refactor(modulename): change x in y class
-```
-
-##### Subject
-
-This is the content of your commit message. Please follow these rules:
-
-- It starts with a lowercase letter.
-- It does not end with a point.
-- It must be conjugated in the imperative.
-- The message should explain the what and the why, but not how.
-
-```bash
-git commit -m "type(scope): message"
-```
-
-If you need a longer message, you can add a "body" to the commit.
-
-```bash
-git commit
-```
-
-Git then opens an editor to write the commit.
-
-```text
-type(scope): message
-
-I am the body of the commit and I am not limited in size.
-However, keep in mind that if the commit needs a large description it may be better to have an issue with it.
+git push --tags
 ```
