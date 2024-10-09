@@ -2,16 +2,16 @@
 site_name: "TAO Publisher"
 site_description: "TAO application publisher API/CLI"
 site_author: "CS Group"
-copyright: "Copyright &copy; 2023, CS GROUP"
+copyright: "Copyright &copy; 2024, CS Group"
 
 # Repository
-repo_name: "csgroup/tao-publisher"
-repo_url: "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher"
-edit_uri: edit/master/docs/source
+repo_name: "csgroup-oss/tao-publisher"
+repo_url: "https://github.com/csgroup-oss/tao-publisher"
+edit_uri: edit/master/docs/src
 
 # Configuration
 site_dir: "build/html"
-docs_dir: "source"
+docs_dir: "src"
 theme:
   name: material
   language: en
@@ -30,11 +30,16 @@ theme:
     - search.share
     - search.suggest
     - toc.follow
-  logo: ../assets/img/logo.png
-  favicon: ../assets/img/logo.png
+  logo: assets/img/logo.png
+  favicon: assets/img/logo.png
   icon:
-    repo: fontawesome/brands/git-alt
+    repo: fontawesome/brands/github
   palette:
+    # Palette toggle for auto-system mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -55,29 +60,13 @@ theme:
 # Extensions
 markdown_extensions:
   - abbr
-  - attr_list
   - admonition
-  - footnotes
+  - attr_list
+  - md_in_html
   - mkdocs-click
-  - pymdownx.betterem
-  - pymdownx.caret
-  - pymdownx.details
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.keys
-  - pymdownx.mark
-  - pymdownx.smartsymbols
   - pymdownx.snippets:
-      base_path: ["..", "source"]
+      base_path: ["..", "src"]
       check_paths: true
-  - pymdownx.superfences
-  - pymdownx.tabbed:
-      alternate_style: true
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.tilde
-  - tables
   - toc:
       permalink: true
 
@@ -85,7 +74,6 @@ markdown_extensions:
 plugins:
   - search
   - tags
-  - termynal
   - section-index
   - gen-files:
       scripts:
@@ -118,19 +106,24 @@ plugins:
 
 # Page tree
 nav:
-  - Home: index.md
-  - Usage:
-      - Installation: usage/installation.md
-      - Configuration: usage/configuration.md
-      - Basic usage: usage/basic.md
-      - CLI reference: usage/cli_reference.md
-      - API reference: usage/api_reference.md
+  - Home:
+      - Overview: index.md
+      - About:
+        - Changelog: changelog.md
+        - License: license.md
+  - Getting started:
+      - Installation: getting-started/installation.md
+      - Configuration: getting-started/configuration.md
+      - Usage: getting-started/usage.md
+      - CLI reference: getting-started/cli_reference.md
+      - API reference: getting-started/api_reference.md
   - API Reference: reference/
   - Development:
       - Contributing: development/contributing.md
-      - Source code: "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher"
-      - Issues: "https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher/issues"
+      - Source code: "https://github.com/csgroup-oss/tao-publisher"
+      - Issues: "https://github.com/csgroup-oss/tao-publisher/issues"
 
+# Footer links
 extra:
   social:
     - icon: fontawesome/brands/git-alt

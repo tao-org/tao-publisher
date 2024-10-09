@@ -4,8 +4,8 @@ from pathlib import Path
 
 import mkdocs_gen_files
 
-nav = mkdocs_gen_files.Nav()
 
+nav = mkdocs_gen_files.Nav()
 src = Path("../src")
 
 for path in sorted(src.rglob("*.py")):
