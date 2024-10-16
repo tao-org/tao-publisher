@@ -30,8 +30,6 @@ theme:
     - search.share
     - search.suggest
     - toc.follow
-  logo: assets/img/logo.png
-  favicon: assets/img/logo.png
   icon:
     repo: fontawesome/brands/github
   palette:
