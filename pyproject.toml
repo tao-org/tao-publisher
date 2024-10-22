@@ -49,9 +49,9 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-"Homepage" = "https://github.com/csgroup-oss/tao-publisher"
-"Source" = "https://github.com/csgroup-oss/tao-publisher"
-"Bug Tracker" = "https://github.com/csgroup-oss/tao-publisher/issues"
+"Homepage" = "https://github.com/tao-org/tao-publisher"
+"Source" = "https://github.com/tao-org/tao-publisher"
+"Bug Tracker" = "https://github.com/tao-org/tao-publisher/issues"
 
 [project.scripts]
 tao = "tao._cli:main"

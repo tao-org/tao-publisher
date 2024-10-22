@@ -8,10 +8,6 @@
 ![Lint](https://img.shields.io/badge/lint-ruff,%20mypy-brightgreen?style=flat-square)
 ![Security](https://img.shields.io/badge/security-bandit,%20pip%20audit-purple?style=flat-square)
 
-[Pull Request](https://github.com/csgroup-oss/tao-publisher/pulls) **·**
-[Bug Report](https://github.com/csgroup-oss/tao-publisher/issues/new?template=bug_report.md) **·**
-[Feature Request](https://github.com/csgroup-oss/tao-publisher/issues/new?template=feature_request.md)
-
 The TAO Publisher is a client developed for [TAO](https://hub.eoafrica-dunia.org/ui/sap.html)
 that provides an easy publishing interface with the service through a Python API / CLI.
 
@@ -35,16 +31,16 @@ that provides an easy publishing interface with the service through a Python API
 This project can be installed from its source code.
 
 ```bash
-pip install git+https://github.com/csgroup-oss/tao-publisher.git
+pip install git+https://github.com/tao-org/tao-publisher.git
 ```
 
-You can use `git+https://github.com/csgroup-oss/tao-publisher.git@<tag>`
+You can use `git+https://github.com/tao-org/tao-publisher.git@<tag>`
 to install a specific version.
 
 You can also clone the repo and install from it locally:
 
 ```bash
-git clone https://github.com/csgroup-oss/tao-publisher.git
+git clone https://github.com/tao-org/tao-publisher.git
 cd tao-publisher
 pip install .
 ```

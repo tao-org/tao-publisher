@@ -5,8 +5,8 @@ site_author: "CS Group"
 copyright: "Copyright &copy; 2024, CS Group"
 
 # Repository
-repo_name: "csgroup-oss/tao-publisher"
-repo_url: "https://github.com/csgroup-oss/tao-publisher"
+repo_name: "tao-org/tao-publisher"
+repo_url: "https://github.com/tao-org/tao-publisher"
 edit_uri: edit/master/docs/src
 
 # Configuration
@@ -118,17 +118,13 @@ nav:
   - API Reference: reference/
   - Development:
       - Contributing: development/contributing.md
-      - Source code: "https://github.com/csgroup-oss/tao-publisher"
-      - Issues: "https://github.com/csgroup-oss/tao-publisher/issues"
+      - Source code: "https://github.com/tao-org/tao-publisher"
+      - Issues: "https://github.com/tao-org/tao-publisher/issues"
 
 # Footer links
 extra:
   social:
     - icon: fontawesome/brands/git-alt
-      link: https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher
-    - icon: fontawesome/brands/python
-      link: https://gitlab.si.c-s.fr/space_platforms/dunia/tao-publisher
-    - icon: fontawesome/brands/dev
-      link: https://gitlab.si.c-s.fr/space_platforms/dunia/
+      link: https://github.com/tao-org/tao-publisher
     - icon: fontawesome/solid/globe
       link: https://www.csgroup.eu

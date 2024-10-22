@@ -41,7 +41,7 @@ tools on your system:
 ### Clone the repository
 
 ```bash
-git clone https://github.com/csgroup-oss/tao-publisher
+git clone https://github.com/tao-org/tao-publisher
 ```
 
 ### Environment setup
@@ -90,7 +90,7 @@ pre-commit install --install-hooks
 
 #### Reporting Issues
 
-Issue tracker: <https://github.com/csgroup-oss/tao-publisher/issues>
+Issue tracker: <https://github.com/tao-org/tao-publisher/issues>
 
 If you find a bug, please create an issue in the issue tracker and
 provide the following information:
@@ -119,7 +119,7 @@ Please create an issue and provide the following information:
 2. **Clone the Fork**: Clone your fork to your local machine.
 
    ```shell
-   git clone https://github.com/csgroup-oss/tao-publisher.git
+   git clone https://github.com/tao-org/tao-publisher.git
    cd tao-publisher
    python3 -mvenv .venv
    source .venv/bin/activate
