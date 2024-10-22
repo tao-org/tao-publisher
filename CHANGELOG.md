@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>.<minor>.<patch>`).
 
+## v1.0.0 (2024-10-22)
+
+### Bug fixes
+
+- correct logger name
+
+### Internal
+
+- use python>=3.10, refactor with newer syntax, update config and tooling
+
 ## v0.1.0 (2023-11-17)
 
 ### Feat
